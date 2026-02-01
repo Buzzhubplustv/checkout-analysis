@@ -1,0 +1,1853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopify Compliance Analyzer | Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --shopify-green: #95BF46;
+            --shopify-blue: #5C6AC4;
+            --shopify-dark: #212B35;
+            --shopify-light: #F6F6F7;
+            --danger: #de3618;
+            --warning: #f59e0b;
+            --success: #50b83c;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f9fafb;
+        }
+        
+        .sidebar {
+            transition: all 0.3s ease;
+        }
+        
+        .analysis-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .analysis-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .severity-high {
+            border-left: 4px solid var(--danger);
+        }
+        
+        .severity-medium {
+            border-left: 4px solid var(--warning);
+        }
+        
+        .severity-low {
+            border-left: 4px solid #a2a5b9;
+        }
+        
+        .btn-primary {
+            background-color: var(--shopify-blue);
+        }
+        
+        .btn-primary:hover {
+            background-color: #202e78;
+        }
+        
+        .btn-success {
+            background-color: var(--shopify-green);
+        }
+        
+        .btn-success:hover {
+            background-color: #7da53a;
+        }
+        
+        .risk-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+        
+        .risk-high {
+            background-color: var(--danger);
+        }
+        
+        .risk-medium {
+            background-color: var(--warning);
+        }
+        
+        .risk-low {
+            background-color: #a2a5b9;
+        }
+        
+        .tab-active {
+            border-bottom: 3px solid var(--shopify-blue);
+            color: var(--shopify-blue);
+        }
+        
+        .compliance-score {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        
+        .score-high {
+            color: var(--success);
+        }
+        
+        .score-medium {
+            color: var(--warning);
+        }
+        
+        .score-low {
+            color: var(--danger);
+        }
+        
+        .no-issues {
+            background: linear-gradient(135deg, #f0fff4 0%, #dcfce7 100%);
+            border-left: 4px solid var(--success);
+        }
+        
+        /* Mobile menu styles */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 280px;
+            height: 100vh;
+            background: #1f2937;
+            transition: left 0.3s ease;
+            z-index: 1001;
+            overflow-y: auto;
+        }
+        
+        .mobile-menu.active {
+            left: 0;
+        }
+        
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        
+        .mobile-overlay.active {
+            display: block;
+        }
+        
+        /* Modal styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .modal.active {
+            transform: scale(1);
+            opacity: 1;
+        }
+        
+        /* Store details badge */
+        .store-badge {
+            background: linear-gradient(135deg, var(--shopify-blue) 0%, #202e78 100%);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        /* Shopify logo styling */
+        .shopify-logo-img {
+            height: 24px;
+            width: auto;
+            object-fit: contain;
+        }
+        
+        /* Mobile responsive improvements */
+        @media (max-width: 768px) {
+            .compliance-score {
+                font-size: 2rem;
+            }
+            
+            .grid-cols-1 {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid-cols-3 {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid-cols-4 {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.75rem;
+            }
+            
+            .space-y-4 > * + * {
+                margin-top: 1rem;
+            }
+            
+            .p-6 {
+                padding: 1rem;
+            }
+            
+            .text-3xl {
+                font-size: 1.875rem;
+            }
+            
+            .w-16 {
+                width: 3rem;
+                height: 3rem;
+            }
+            
+            .modal {
+                width: 95%;
+                margin: 1rem;
+            }
+            
+            .mobile-stack {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .mobile-stack > * {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+            
+            .shopify-logo-img {
+                height: 20px;
+            }
+            
+            .logo-text {
+                font-size: 0.875rem;
+            }
+            
+            /* Better mobile form layout */
+            .form-grid-mobile {
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            
+            /* Better mobile button sizing */
+            .mobile-btn {
+                padding: 0.75rem;
+                font-size: 0.875rem;
+            }
+            
+            /* Better mobile card spacing */
+            .mobile-card {
+                padding: 0.75rem;
+                margin-bottom: 0.75rem;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .text-lg {
+                font-size: 1rem;
+            }
+            
+            .text-xl {
+                font-size: 1.125rem;
+            }
+            
+            .p-4 {
+                padding: 0.75rem;
+            }
+            
+            .gap-4 {
+                gap: 0.75rem;
+            }
+            
+            .space-y-4 > * + * {
+                margin-top: 0.75rem;
+            }
+            
+            .grid-cols-4 {
+                grid-template-columns: 1fr;
+            }
+            
+            .shopify-logo-img {
+                height: 18px;
+            }
+        }
+        
+        @media (min-width: 769px) and (max-width: 1024px) {
+            /* Tablet optimizations */
+            .grid-cols-4 {
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+            }
+            
+            .shopify-logo-img {
+                height: 22px;
+            }
+        }
+        
+        /* Touch-friendly elements for mobile */
+        @media (hover: none) and (pointer: coarse) {
+            button, 
+            a, 
+            input[type="checkbox"], 
+            input[type="radio"] {
+                min-height: 44px;
+                min-width: 44px;
+            }
+            
+            .mobile-touch {
+                padding: 0.75rem;
+            }
+            
+            .form-input-touch {
+                padding: 0.875rem;
+                font-size: 16px; /* Prevents iOS zoom */
+            }
+        }
+        
+        /* Improved focus states for accessibility */
+        button:focus, 
+        input:focus, 
+        select:focus {
+            outline: 2px solid var(--shopify-blue);
+            outline-offset: 2px;
+        }
+        
+        /* Loading animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .loading {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        /* Notification badge */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="mobile-menu">
+        <div class="p-4 border-b border-gray-800">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <img src="https://cdn.shopify.com/shopifycloud/brochure/assets/brand-assets/shopify-logo-white-bfa8f6afd5d44a309ae9d6c70f8c92a36c12b5b0b8c7879970f87907ac6a6a87.svg" 
+                         alt="Shopify" 
+                         class="shopify-logo-img">
+                    <span class="text-sm font-medium text-gray-300">Compliance</span>
+                </div>
+                <button id="closeMobileMenu" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+        </div>
+        <div class="p-4 border-b border-gray-800">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-[var(--shopify-blue)] flex items-center justify-center">
+                    <span id="mobileAvatar" class="text-white font-medium">DA</span>
+                </div>
+                <div>
+                    <div id="mobileUserName" class="font-medium text-white">Daryl</div>
+                    <div class="text-xs text-gray-400">Compliance Admin</div>
+                </div>
+            </div>
+        </div>
+        <nav class="flex-1 p-4 space-y-2">
+            <a href="#" class="flex items-center py-3 px-3 rounded bg-gray-800 text-white">
+                <i class="fas fa-tachometer-alt mr-3"></i> Dashboard
+            </a>
+            <a href="#" class="flex items-center py-3 px-3 rounded text-gray-400 hover:bg-gray-800 hover:text-white">
+                <i class="fas fa-store mr-3"></i> Store Analysis
+            </a>
+            <a href="#" class="flex items-center py-3 px-3 rounded text-gray-400 hover:bg-gray-800 hover:text-white">
+                <i class="fas fa-shield-alt mr-3"></i> Security Checks
+            </a>
+            <a href="#" class="flex items-center py-3 px-3 rounded text-gray-400 hover:bg-gray-800 hover:text-white">
+                <i class="fas fa-file-contract mr-3"></i> Compliance Reports
+            </a>
+            <a href="#" class="flex items-center py-3 px-3 rounded text-gray-400 hover:bg-gray-800 hover:text-white">
+                <i class="fas fa-cog mr-3"></i> Settings
+            </a>
+        </nav>
+        <div class="p-4 border-t border-gray-800">
+            <button class="w-full flex items-center py-3 px-3 rounded text-gray-400 hover:bg-gray-800 hover:text-white">
+                <i class="fas fa-sign-out-alt mr-3"></i> Logout
+            </button>
+        </div>
+    </div>
+    
+    <!-- Mobile Overlay -->
+    <div id="mobileOverlay" class="mobile-overlay"></div>
+
+    <!-- Desktop Sidebar -->
+    <div class="sidebar bg-[var(--shopify-dark)] text-white w-64 flex-shrink-0 hidden md:flex flex-col">
+        <div class="p-4 border-b border-gray-800">
+            <div class="flex items-center space-x-3">
+                <img src="https://cdn.shopify.com/shopifycloud/brochure/assets/brand-assets/shopify-logo-white-bfa8f6afd5d44a309ae9d6c70f8c92a36c12b5b0b8c7879970f87907ac6a6a87.svg" 
+                     alt="Shopify" 
+                     class="shopify-logo-img">
+                <span class="text-sm font-medium text-gray-300">Analytics Board</span>
+            </div>
+        </div>
+        <div class="p-4 border-b border-gray-800">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-[var(--shopify-blue)] flex items-center justify-center">
+                    <span id="sidebarAvatar" class="text-white font-medium">DA</span>
+                </div>
+                <div>
+                    <div id="sidebarUserName" class="font-medium">Daryl</div>
+                    <div class="text-xs text-gray-400">Compliance Admin</div>
+                </div>
+            </div>
+        </div>
+        <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+            <a href="#" class="block py-2 px-3 rounded bg-gray-800 text-white">
+                <i class="fas fa-tachometer-alt mr-2"></i> Dashboard
+            </a>
+            <a href="#" class="block py-2 px-3 rounded text-gray-400 hover:bg-gray-800 hover:text-white">
+                <i class="fas fa-store mr-2"></i> Store Analysis
+            </a>
+            <a href="#" class="block py-2 px-3 rounded text-gray-400 hover:bg-gray-800 hover:text-white">
+                <i class="fas fa-shield-alt mr-2"></i> Security Checks
+            </a>
+            <a href="#" class="block py-2 px-3 rounded text-gray-400 hover:bg-gray-800 hover:text-white">
+                <i class="fas fa-file-contract mr-2"></i> Compliance Reports
+            </a>
+            <a href="#" class="block py-2 px-3 rounded text-gray-400 hover:bg-gray-800 hover:text-white">
+                <i class="fas fa-cog mr-2"></i> Settings
+            </a>
+        </nav>
+        <div class="p-4 border-t border-gray-800">
+            <button class="w-full py-2 px-3 rounded text-gray-400 hover:bg-gray-800 hover:text-white text-left">
+                <i class="fas fa-sign-out-alt mr-2"></i> Logout
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <!-- Top Navigation -->
+        <header class="bg-white border-b border-gray-200 flex-shrink-0">
+            <div class="flex items-center justify-between px-4 md:px-6 py-3">
+                <div class="flex items-center">
+                    <button id="openMobileMenu" class="md:hidden mr-4 text-gray-500 mobile-touch">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <img src="https://cdn.shopify.com/shopifycloud/brochure/assets/brand-assets/shopify-logo-primary-logo-456baa801ee66a0a435671082365958316f2d64d44f7c401b87b7c5bcdee6a8a.svg" 
+                         alt="Shopify" 
+                         class="shopify-logo-img">
+                    <div class="ml-3 text-sm md:text-base text-gray-600 border-l border-gray-300 pl-3 logo-text">
+                        Compliance Analyzer
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <!-- Notification Bell -->
+                    <div class="relative">
+                        <button id="notificationBtn" class="text-gray-500 hover:text-gray-700 relative mobile-touch">
+                            <i class="fas fa-bell text-lg"></i>
+                            <span class="notification-badge">3</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Help/Question Mark -->
+                    <button id="helpBtn" class="text-gray-500 hover:text-gray-700 mobile-touch">
+                        <i class="fas fa-question-circle text-lg"></i>
+                    </button>
+                    
+                    <!-- User Profile Icon -->
+                    <div class="relative">
+                        <button id="userProfileBtn" class="text-gray-500 hover:text-gray-700 mobile-touch">
+                            <i class="fas fa-user-cog text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50">
+            <div class="max-w-6xl mx-auto">
+                <!-- Dashboard Header -->
+                <div class="mb-6">
+                    <h1 class="text-xl md:text-2xl font-semibold text-gray-800">Welcome <span id="welcomeName">Daryl</span>...</h1>
+                    <p class="text-gray-600 mt-1 text-sm md:text-base">Compliance status overview for your stores</p>
+                </div>
+                
+                <!-- Compliance Score Summary -->
+                <div class="grid grid-cols-4 gap-4 md:gap-6 mb-6">
+                    <div class="bg-white rounded-lg shadow-md p-4 md:p-6 mobile-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500">Overall Score</p>
+                                <div class="compliance-score score-high" id="complianceScore">95%</div>
+                            </div>
+                            <div class="w-12 h-12 md:w-16 md:h-16 rounded-full bg-green-100 flex items-center justify-center">
+                                <i class="fas fa-chart-bar text-green-600 text-xl md:text-2xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="text-xs text-gray-500 mb-1">Compliance Level</div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-500 h-2 rounded-full" style="width: 95%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow-md p-4 md:p-6 mobile-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500">Critical Issues</p>
+                                <div class="text-2xl md:text-3xl font-bold text-red-600" id="criticalIssues">0</div>
+                            </div>
+                            <div class="w-12 h-12 md:w-16 md:h-16 rounded-full bg-red-100 flex items-center justify-center">
+                                <i class="fas fa-exclamation-triangle text-red-600 text-xl md:text-2xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="text-xs text-gray-500">Requires immediate action</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow-md p-4 md:p-6 mobile-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500">Warnings</p>
+                                <div class="text-2xl md:text-3xl font-bold text-yellow-600" id="warningIssues">0</div>
+                            </div>
+                            <div class="w-12 h-12 md:w-16 md:h-16 rounded-full bg-yellow-100 flex items-center justify-center">
+                                <i class="fas fa-exclamation-circle text-yellow-600 text-xl md:text-2xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="text-xs text-gray-500">Needs attention soon</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow-md p-4 md:p-6 mobile-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500">Total Issues</p>
+                                <div class="text-2xl md:text-3xl font-bold text-gray-700" id="totalIssues">0</div>
+                            </div>
+                            <div class="w-12 h-12 md:w-16 md:h-16 rounded-full bg-blue-100 flex items-center justify-center">
+                                <i class="fas fa-list-alt text-blue-600 text-xl md:text-2xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="text-xs text-gray-500">All identified problems</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Analysis Form -->
+                <div class="bg-white rounded-lg shadow-md p-4 md:p-6 mb-6">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-2">
+                        <h2 class="text-lg font-semibold text-gray-800">Run New Compliance Analysis</h2>
+                        <div id="currentStoreBadge" class="hidden">
+                            <span class="store-badge">
+                                <i class="fas fa-store mr-1"></i>
+                                <span id="currentStoreName">Store Name</span>
+                            </span>
+                        </div>
+                    </div>
+                    <form id="analysisForm" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 form-grid-mobile">
+                            <div>
+                                <label for="storeName" class="block text-sm font-medium text-gray-700 mb-1">Store Name *</label>
+                                <input type="text" id="storeName" name="storeName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--shopify-blue)] focus:border-[var(--shopify-blue)] form-input-touch" required placeholder="Enter store name">
+                                <p class="text-xs text-gray-500 mt-1">Required for analysis</p>
+                            </div>
+                            <div>
+                                <label for="storeUrl" class="block text-sm font-medium text-gray-700 mb-1">Store URL *</label>
+                                <input type="url" id="storeUrl" name="storeUrl" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--shopify-blue)] focus:border-[var(--shopify-blue)] form-input-touch" placeholder="https://example.myshopify.com" required pattern="https?://.*">
+                                <p class="text-xs text-gray-500 mt-1">Must be a valid Shopify URL</p>
+                            </div>
+                            <div>
+                                <label for="ticketId" class="block text-sm font-medium text-gray-700 mb-1">Ticket ID (Optional)</label>
+                                <input type="text" id="ticketId" name="ticketId" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--shopify-blue)] focus:border-[var(--shopify-blue)] form-input-touch" placeholder="Optional - existing support ticket">
+                                <p class="text-xs text-gray-500 mt-1">For reference only</p>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Select Compliance Checks *</label>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="checkoutIssues" name="checks" value="checkoutIssues" class="h-4 w-4 text-[var(--shopify-blue)] focus:ring-[var(--shopify-blue)] border-gray-300 rounded" checked>
+                                    <label for="checkoutIssues" class="ml-2 block text-sm text-gray-700">Checkout & Payment Issues</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="brandLicense" name="checks" value="brandLicense" class="h-4 w-4 text-[var(--shopify-blue)] focus:ring-[var(--shopify-blue)] border-gray-300 rounded" checked>
+                                    <label for="brandLicense" class="ml-2 block text-sm text-gray-700">Brand Permission License</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="apiViolations" name="checks" value="apiViolations" class="h-4 w-4 text-[var(--shopify-blue)] focus:ring-[var(--shopify-blue)] border-gray-300 rounded" checked>
+                                    <label for="apiViolations" class="ml-2 block text-sm text-gray-700">API License Violations</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="csrfCompliance" name="checks" value="csrfCompliance" class="h-4 w-4 text-[var(--shopify-blue)] focus:ring-[var(--shopify-blue)] border-gray-300 rounded" checked>
+                                    <label for="csrfCompliance" class="ml-2 block text-sm text-gray-700">CSRF Compliance Status</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="ipInfringement" name="checks" value="ipInfringement" class="h-4 w-4 text-[var(--shopify-blue)] focus:ring-[var(--shopify-blue)] border-gray-300 rounded" checked>
+                                    <label for="ipInfringement" class="ml-2 block text-sm text-gray-700">Intellectual Property</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="sellerPermit" name="checks" value="sellerPermit" class="h-4 w-4 text-[var(--shopify-blue)] focus:ring-[var(--shopify-blue)] border-gray-300 rounded" checked>
+                                    <label for="sellerPermit" class="ml-2 block text-sm text-gray-700">Seller Permit Validation</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="httpHeaders" name="checks" value="httpHeaders" class="h-4 w-4 text-[var(--shopify-blue)] focus:ring-[var(--shopify-blue)] border-gray-300 rounded" checked>
+                                    <label for="httpHeaders" class="ml-2 block text-sm text-gray-700">HTTP Security Headers</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="spavCompliance" name="checks" value="spavCompliance" class="h-4 w-4 text-[var(--shopify-blue)] focus:ring-[var(--shopify-blue)] border-gray-300 rounded" checked>
+                                    <label for="spavCompliance" class="ml-2 block text-sm text-gray-700">SPAV Compliance</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="allChecks" class="h-4 w-4 text-[var(--shopify-blue)] focus:ring-[var(--shopify-blue)] border-gray-300 rounded" checked>
+                                    <label for="allChecks" class="ml-2 block text-sm text-gray-700 font-medium">Select All Checks</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="pt-2 flex flex-col md:flex-row md:items-center justify-between gap-4 mobile-stack">
+                            <div class="text-sm text-gray-600">
+                                <i class="fas fa-info-circle text-[var(--shopify-blue)] mr-1"></i>
+                                All selected checks will be analyzed for compliance
+                            </div>
+                            <button type="submit" class="btn-primary text-white px-4 py-2 rounded-md hover:bg-[#202e78] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--shopify-blue)] md:w-auto mobile-btn">
+                                <i class="fas fa-search mr-2"></i> Run Compliance Analysis
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Results Section (Initially Hidden) -->
+                <div id="resultsSection" class="hidden bg-white rounded-lg shadow-md p-4 md:p-6">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-800">Compliance Analysis Results</h2>
+                            <p class="text-sm text-gray-600">Analysis for: <span id="resultStoreName" class="font-medium">-</span></p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button id="exportPdf" class="px-3 py-1 border border-gray-300 rounded-md text-sm hover:bg-gray-50 mobile-btn">
+                                <i class="fas fa-file-pdf mr-1"></i> <span class="md:inline">Download PDF</span>
+                            </button>
+                            <button id="exportCsv" class="px-3 py-1 border border-gray-300 rounded-md text-sm hover:bg-gray-50 mobile-btn">
+                                <i class="fas fa-file-csv mr-1"></i> <span class="md:inline">Export CSV</span>
+                            </button>
+                            <button id="reanalyze" class="px-3 py-1 bg-[var(--shopify-green)] text-white rounded-md text-sm hover:bg-[#7da53a] mobile-btn">
+                                <i class="fas fa-redo mr-1"></i> New Analysis
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Store Summary -->
+                    <div class="mb-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                            <div class="bg-gray-50 p-3 rounded-md">
+                                <div class="text-sm text-gray-500">Store Name</div>
+                                <div id="resultStoreNameFull" class="font-medium">-</div>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-md">
+                                <div class="text-sm text-gray-500">Store URL</div>
+                                <div id="resultStoreUrl" class="font-medium break-all">-</div>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-md">
+                                <div class="text-sm text-gray-500">Ticket ID</div>
+                                <div id="resultTicketId" class="font-medium">-</div>
+                            </div>
+                        </div>
+                        <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-exclamation-triangle text-red-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-red-700">
+                                        <span class="font-medium">5 Critical Issues Detected!</span> Immediate action required to resolve compliance violations.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Results Tabs -->
+                    <div class="border-b border-gray-200 mb-6 overflow-x-auto">
+                        <nav class="-mb-px flex space-x-4 md:space-x-8 min-w-max">
+                            <button id="tabAll" class="tab-active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                                All Issues
+                            </button>
+                            <button id="tabCritical" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                                Critical (5)
+                            </button>
+                            <button id="tabWarnings" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                                Warnings (1)
+                            </button>
+                            <button id="tabCompliant" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                                Compliant (3)
+                            </button>
+                        </nav>
+                    </div>
+                    
+                    <div id="resultsContainer" class="space-y-4">
+                        <!-- Results will be dynamically inserted here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="profileModalOverlay" class="modal-overlay">
+        <div id="profileModal" class="modal">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800">Edit Profile</h2>
+                    <button id="closeProfileModal" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                </div>
+                
+                <form id="profileForm" class="space-y-4">
+                    <div>
+                        <label for="editName" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                        <input type="text" id="editName" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--shopify-blue)] focus:border-[var(--shopify-blue)] form-input-touch"
+                               value="Daryl"
+                               required>
+                    </div>
+                    
+                    <div>
+                        <label for="editEmail" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                        <input type="email" id="editEmail" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--shopify-blue)] focus:border-[var(--shopify-blue)] form-input-touch"
+                               value="daryl@shopify.com"
+                               required>
+                    </div>
+                    
+                    <div>
+                        <label for="editRole" class="block text-sm font-medium text-gray-700 mb-2">Role</label>
+                        <select id="editRole" 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--shopify-blue)] focus:border-[var(--shopify-blue)]">
+                            <option value="admin" selected>Compliance Admin</option>
+                            <option value="analyst">Compliance Analyst</option>
+                            <option value="manager">Compliance Manager</option>
+                            <option value="viewer">Viewer</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="editAvatar" class="block text-sm font-medium text-gray-700 mb-2">Avatar Initials</label>
+                        <input type="text" id="editAvatar" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--shopify-blue)] focus:border-[var(--shopify-blue)] form-input-touch"
+                               maxlength="2"
+                               value="DA"
+                               required>
+                        <p class="text-xs text-gray-500 mt-2">Enter 2 characters for your avatar initials</p>
+                    </div>
+                    
+                    <div class="pt-4">
+                        <button type="submit" 
+                                class="w-full bg-[var(--shopify-blue)] hover:bg-[#202e78] text-white font-medium py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--shopify-blue)] transition duration-200 mobile-btn">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications Modal -->
+    <div id="notificationsModalOverlay" class="modal-overlay">
+        <div id="notificationsModal" class="modal">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800">Notifications</h2>
+                    <button id="closeNotificationsModal" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="p-3 bg-red-50 border-l-4 border-red-400 rounded">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-exclamation-triangle text-red-400 mt-1"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-red-800">Critical Alert</p>
+                                <p class="text-sm text-red-700 mt-1">New store requires immediate compliance review</p>
+                                <p class="text-xs text-red-600 mt-1">2 hours ago</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-3 bg-yellow-50 border-l-4 border-yellow-400 rounded">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-exclamation-circle text-yellow-400 mt-1"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-yellow-800">Warning</p>
+                                <p class="text-sm text-yellow-700 mt-1">3 stores pending compliance verification</p>
+                                <p class="text-xs text-yellow-600 mt-1">5 hours ago</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-info-circle text-blue-400 mt-1"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-blue-800">Information</p>
+                                <p class="text-sm text-blue-700 mt-1">Compliance policy update available</p>
+                                <p class="text-xs text-blue-600 mt-1">1 day ago</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 pt-4 border-t border-gray-200">
+                    <button id="markAllRead" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-200">
+                        Mark All as Read
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="helpModalOverlay" class="modal-overlay">
+        <div id="helpModal" class="modal">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800">Help & Support</h2>
+                    <button id="closeHelpModal" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-800 mb-2">Compliance Analysis Guide</h3>
+                        <p class="text-gray-600 mb-3">This tool helps you analyze Shopify stores for compliance issues across multiple categories.</p>
+                        
+                        <div class="space-y-3">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-gray-700">Step 1: Enter Store Details</p>
+                                    <p class="text-sm text-gray-600">Provide store name and URL to begin analysis</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-gray-700">Step 2: Select Compliance Checks</p>
+                                    <p class="text-sm text-gray-600">Choose which compliance areas to analyze</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-gray-700">Step 3: Review Results</p>
+                                    <p class="text-sm text-gray-600">Examine critical issues, warnings, and compliant areas</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-800 mb-2">Severity Levels</h3>
+                        <div class="space-y-2">
+                            <div class="flex items-center">
+                                <span class="risk-indicator risk-high"></span>
+                                <span class="text-sm font-medium text-gray-700">Critical</span>
+                                <span class="text-sm text-gray-600 ml-2">- Requires immediate action</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="risk-indicator risk-medium"></span>
+                                <span class="text-sm font-medium text-gray-700">Warning</span>
+                                <span class="text-sm text-gray-600 ml-2">- Needs attention soon</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="w-3 h-3 rounded-full bg-green-500 mr-2"></span>
+                                <span class="text-sm font-medium text-gray-700">Compliant</span>
+                                <span class="text-sm text-gray-600 ml-2">- No issues found</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 pt-4 border-t border-gray-200">
+                    <p class="text-sm text-gray-600 mb-2">Need additional help?</p>
+                    <a href="mailto:support@shopify.com" class="text-[var(--shopify-blue)] hover:text-[#202e78] font-medium">
+                        <i class="fas fa-envelope mr-2"></i>Contact Support
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const analysisForm = document.getElementById('analysisForm');
+            const resultsSection = document.getElementById('resultsSection');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const resultStoreName = document.getElementById('resultStoreName');
+            const resultStoreNameFull = document.getElementById('resultStoreNameFull');
+            const resultStoreUrl = document.getElementById('resultStoreUrl');
+            const resultTicketId = document.getElementById('resultTicketId');
+            const allChecks = document.getElementById('allChecks');
+            const currentStoreBadge = document.getElementById('currentStoreBadge');
+            const currentStoreName = document.getElementById('currentStoreName');
+            
+            // Mobile menu elements
+            const openMobileMenu = document.getElementById('openMobileMenu');
+            const closeMobileMenu = document.getElementById('closeMobileMenu');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const mobileOverlay = document.getElementById('mobileOverlay');
+            
+            // Profile modal elements
+            const userProfileBtn = document.getElementById('userProfileBtn');
+            const profileModalOverlay = document.getElementById('profileModalOverlay');
+            const profileModal = document.getElementById('profileModal');
+            const closeProfileModal = document.getElementById('closeProfileModal');
+            const profileForm = document.getElementById('profileForm');
+            
+            // Notification modal elements
+            const notificationBtn = document.getElementById('notificationBtn');
+            const notificationsModalOverlay = document.getElementById('notificationsModalOverlay');
+            const notificationsModal = document.getElementById('notificationsModal');
+            const closeNotificationsModal = document.getElementById('closeNotificationsModal');
+            const markAllRead = document.getElementById('markAllRead');
+            const notificationBadge = document.querySelector('.notification-badge');
+            
+            // Help modal elements
+            const helpBtn = document.getElementById('helpBtn');
+            const helpModalOverlay = document.getElementById('helpModalOverlay');
+            const helpModal = document.getElementById('helpModal');
+            const closeHelpModal = document.getElementById('closeHelpModal');
+            
+            // Tab switching
+            const tabAll = document.getElementById('tabAll');
+            const tabCritical = document.getElementById('tabCritical');
+            const tabWarnings = document.getElementById('tabWarnings');
+            const tabCompliant = document.getElementById('tabCompliant');
+            
+            // Sample data for results - 5 CRITICAL ISSUES + 1 WARNING
+            const sampleResults = {
+                checkoutIssues: {
+                    title: "Checkout & Payment Issues",
+                    severity: "high", // CRITICAL - Issue 1
+                    details: [
+                        {
+                            title: "Payment Processing Configuration Error",
+                            description: "Checkout configuration contains misconfigured payment gateways causing transaction failures and abandoned carts. The payment flow is not properly integrated with Shopify's checkout system.",
+                            risk: "High",
+                            recommendation: "Review and reconfigure payment gateway settings. Test checkout flow with multiple payment methods. Ensure proper webhook configurations for payment notifications."
+                        },
+                        {
+                            title: "Checkout Liquid Architecture Conflict",
+                            description: "Custom checkout.liquid modifications break the standard Shopify checkout flow, causing JavaScript errors and preventing customers from completing purchases.",
+                            risk: "High",
+                            recommendation: "Remove conflicting custom code from checkout.liquid. Use Shopify's recommended methods for checkout customization. Test checkout on multiple devices and browsers."
+                        }
+                    ]
+                },
+                brandLicense: {
+                    title: "Brand Permission License",
+                    severity: "high", // CRITICAL - Issue 2
+                    details: [
+                        {
+                            title: "Unauthorized Brand Assets Usage",
+                            description: "Store is using copyrighted images, logos, and fonts without proper licensing agreements. This includes premium theme components and stock photography without commercial licenses.",
+                            risk: "High",
+                            recommendation: "Immediately remove unlicensed assets or obtain proper licensing. Use Shopify's free asset library or purchase commercial licenses for all third-party assets."
+                        },
+                        {
+                            title: "Theme Licensing Violation",
+                            description: "Current theme is being used without valid commercial license or exceeds the licensed domain usage terms specified in the theme's license agreement.",
+                            risk: "High",
+                            recommendation: "Purchase valid commercial license for the theme or switch to a properly licensed alternative. Update theme registration in Shopify admin."
+                        }
+                    ]
+                },
+                apiViolations: {
+                    title: "API License Violations",
+                    severity: "high", // CRITICAL - Issue 3
+                    details: [
+                        {
+                            title: "API Rate Limit Exceedances",
+                            description: "Store is consistently exceeding Shopify API rate limits, causing service disruptions and violating API usage policies. This suggests improper API integration or data scraping.",
+                            risk: "High",
+                            recommendation: "Implement proper API rate limiting and caching. Review all API calls and optimize to stay within limits. Consider using webhooks instead of polling APIs."
+                        }
+                    ]
+                },
+                csrfCompliance: {
+                    title: "CSRF Compliance Status",
+                    severity: "high", // CRITICAL - Issue 4
+                    details: [
+                        {
+                            title: "Missing CSRF Protection Tokens",
+                            description: "Store lacks proper CSRF token implementation, making it vulnerable to cross-site request forgery attacks that could compromise customer data and admin functions.",
+                            risk: "High",
+                            recommendation: "Implement CSRF token generation and validation for all state-changing operations. Add SameSite cookie attributes and validate request origins."
+                        }
+                    ]
+                },
+                ipInfringement: {
+                    title: "Intellectual Property",
+                    severity: "none", // NO ISSUES
+                    details: []
+                },
+                sellerPermit: {
+                    title: "Seller Permit Validation",
+                    severity: "medium", // WARNING - 1 warning issue
+                    details: [
+                        {
+                            title: "Business License Validation Required",
+                            description: "Store is operating without verified seller permit for the current business region. This could result in legal complications if not addressed.",
+                            risk: "Medium",
+                            recommendation: "Obtain and upload valid seller permit documentation in Shopify admin settings within the next 30 days."
+                        }
+                    ]
+                },
+                httpHeaders: {
+                    title: "HTTP Security Headers",
+                    severity: "none", // NO ISSUES
+                    details: []
+                },
+                spavCompliance: {
+                    title: "SPAV Compliance",
+                    severity: "none", // NO ISSUES
+                    details: []
+                }
+            };
+            
+            // Initialize all checkboxes as checked
+            const checkboxes = document.querySelectorAll('input[name="checks"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+            });
+            
+            // Mobile Menu Functions
+            function openMobileMenuFunc() {
+                mobileMenu.classList.add('active');
+                mobileOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            function closeMobileMenuFunc() {
+                mobileMenu.classList.remove('active');
+                mobileOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            
+            // Event listeners for mobile menu
+            openMobileMenu.addEventListener('click', openMobileMenuFunc);
+            closeMobileMenu.addEventListener('click', closeMobileMenuFunc);
+            mobileOverlay.addEventListener('click', closeMobileMenuFunc);
+            
+            // Close mobile menu when clicking on menu items
+            document.querySelectorAll('#mobileMenu a').forEach(link => {
+                link.addEventListener('click', closeMobileMenuFunc);
+            });
+            
+            // Profile Modal Functions
+            function openProfileModal() {
+                profileModalOverlay.classList.add('active');
+                setTimeout(() => {
+                    profileModal.classList.add('active');
+                }, 10);
+            }
+            
+            function closeProfileModalFunc() {
+                profileModal.classList.remove('active');
+                setTimeout(() => {
+                    profileModalOverlay.classList.remove('active');
+                }, 300);
+            }
+            
+            // Event listeners for profile modal
+            userProfileBtn.addEventListener('click', openProfileModal);
+            closeProfileModal.addEventListener('click', closeProfileModalFunc);
+            
+            // Close modal when clicking on overlay
+            profileModalOverlay.addEventListener('click', function(e) {
+                if (e.target === profileModalOverlay) {
+                    closeProfileModalFunc();
+                }
+            });
+            
+            // Notifications Modal Functions
+            function openNotificationsModal() {
+                notificationsModalOverlay.classList.add('active');
+                setTimeout(() => {
+                    notificationsModal.classList.add('active');
+                }, 10);
+            }
+            
+            function closeNotificationsModalFunc() {
+                notificationsModal.classList.remove('active');
+                setTimeout(() => {
+                    notificationsModalOverlay.classList.remove('active');
+                }, 300);
+            }
+            
+            // Event listeners for notifications modal
+            notificationBtn.addEventListener('click', openNotificationsModal);
+            closeNotificationsModal.addEventListener('click', closeNotificationsModalFunc);
+            
+            // Close notifications modal when clicking on overlay
+            notificationsModalOverlay.addEventListener('click', function(e) {
+                if (e.target === notificationsModalOverlay) {
+                    closeNotificationsModalFunc();
+                }
+            });
+            
+            // Mark all notifications as read
+            markAllRead.addEventListener('click', function() {
+                notificationBadge.textContent = '0';
+                notificationBadge.style.backgroundColor = '#6b7280';
+                alert('All notifications marked as read.');
+                closeNotificationsModalFunc();
+            });
+            
+            // Help Modal Functions
+            function openHelpModal() {
+                helpModalOverlay.classList.add('active');
+                setTimeout(() => {
+                    helpModal.classList.add('active');
+                }, 10);
+            }
+            
+            function closeHelpModalFunc() {
+                helpModal.classList.remove('active');
+                setTimeout(() => {
+                    helpModalOverlay.classList.remove('active');
+                }, 300);
+            }
+            
+            // Event listeners for help modal
+            helpBtn.addEventListener('click', openHelpModal);
+            closeHelpModal.addEventListener('click', closeHelpModalFunc);
+            
+            // Close help modal when clicking on overlay
+            helpModalOverlay.addEventListener('click', function(e) {
+                if (e.target === helpModalOverlay) {
+                    closeHelpModalFunc();
+                }
+            });
+            
+            // Profile form submission
+            profileForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const newName = document.getElementById('editName').value;
+                const newAvatar = document.getElementById('editAvatar').value;
+                const newEmail = document.getElementById('editEmail').value;
+                const newRole = document.getElementById('editRole').value;
+                
+                // Update name in all locations
+                document.getElementById('welcomeName').textContent = newName;
+                document.getElementById('sidebarUserName').textContent = newName;
+                document.getElementById('mobileUserName').textContent = newName;
+                
+                // Update avatar initials
+                document.getElementById('sidebarAvatar').textContent = newAvatar;
+                document.getElementById('mobileAvatar').textContent = newAvatar;
+                
+                // Save to localStorage
+                saveToLocalStorage('advisorProfile', {
+                    name: newName,
+                    avatar: newAvatar,
+                    email: newEmail,
+                    role: newRole
+                });
+                
+                // Show success message
+                alert(`Profile updated successfully! Welcome ${newName}.`);
+                
+                closeProfileModalFunc();
+            });
+            
+            // Select all checks functionality
+            allChecks.addEventListener('change', function() {
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = allChecks.checked;
+                });
+            });
+            
+            // Form submission
+            analysisForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Show loading state
+                const submitBtn = analysisForm.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Analyzing...';
+                submitBtn.disabled = true;
+                
+                // Get form values
+                const storeName = document.getElementById('storeName').value;
+                const storeUrl = document.getElementById('storeUrl').value;
+                const ticketId = document.getElementById('ticketId').value;
+                const selectedChecks = Array.from(document.querySelectorAll('input[name="checks"]:checked')).map(el => el.value);
+                
+                // If no checks selected, show error
+                if (selectedChecks.length === 0) {
+                    alert('Please select at least one compliance check to analyze.');
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    return;
+                }
+                
+                // Simulate analysis delay for better UX
+                setTimeout(() => {
+                    // Save store details
+                    saveToLocalStorage('lastAnalysis', {
+                        storeName: storeName,
+                        storeUrl: storeUrl,
+                        ticketId: ticketId,
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    // Update result headers
+                    resultStoreName.textContent = storeName;
+                    resultStoreNameFull.textContent = storeName;
+                    resultStoreUrl.textContent = storeUrl;
+                    resultTicketId.textContent = ticketId || 'Not provided';
+                    
+                    // Update current store badge
+                    currentStoreName.textContent = storeName;
+                    currentStoreBadge.classList.remove('hidden');
+                    
+                    // Clear previous results
+                    resultsContainer.innerHTML = '';
+                    
+                    // Generate results for selected checks
+                    let totalIssues = 0;
+                    let criticalIssues = 0;
+                    let warningIssues = 0;
+                    let compliantIssues = 0;
+                    
+                    // Define order: 1. Checkout, 2. Brand License, 3. API Violations, 4. CSRF, then others
+                    const orderedChecks = [
+                        'checkoutIssues',
+                        'brandLicense', 
+                        'apiViolations',
+                        'csrfCompliance',
+                        'ipInfringement',
+                        'sellerPermit',
+                        'httpHeaders',
+                        'spavCompliance'
+                    ];
+                    
+                    // Filter to only include selected checks
+                    const filteredOrderedChecks = orderedChecks.filter(check => selectedChecks.includes(check));
+                    
+                    filteredOrderedChecks.forEach(check => {
+                        if (sampleResults[check]) {
+                            const result = sampleResults[check];
+                            
+                            // Count issues
+                            result.details.forEach(detail => {
+                                totalIssues++;
+                                if (detail.risk === 'High') criticalIssues++;
+                                if (detail.risk === 'Medium') warningIssues++;
+                            });
+                            
+                            if (result.details.length === 0) {
+                                compliantIssues++;
+                            }
+                            
+                            const resultCard = document.createElement('div');
+                            
+                            if (result.severity === 'none') {
+                                // Show "No Issues Found" card
+                                resultCard.className = 'analysis-card no-issues rounded-lg shadow-sm overflow-hidden';
+                                
+                                resultCard.innerHTML = `
+                                    <div class="px-4 py-3 bg-green-50 border-b border-green-200 flex justify-between items-center">
+                                        <h3 class="font-semibold text-gray-800">${result.title}</h3>
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            <i class="fas fa-check-circle mr-1"></i> Compliant
+                                        </span>
+                                    </div>
+                                    <div class="p-4 md:p-6 text-center">
+                                        <div class="w-12 h-12 md:w-16 md:h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+                                            <i class="fas fa-check text-green-600 text-xl md:text-2xl"></i>
+                                        </div>
+                                        <h4 class="font-medium text-gray-800 mb-2">No Issues Found</h4>
+                                        <p class="text-sm text-gray-600">This compliance area passes all security checks and meets Shopify requirements.</p>
+                                    </div>
+                                `;
+                            } else {
+                                // Show issues card
+                                resultCard.className = `analysis-card bg-white rounded-lg shadow-sm overflow-hidden ${result.severity === 'high' ? 'severity-high' : 'severity-medium'}`;
+                                
+                                let detailsHtml = '';
+                                result.details.forEach(detail => {
+                                    detailsHtml += `
+                                        <div class="p-4 border-b border-gray-100 last:border-b-0">
+                                            <div class="flex justify-between items-start mb-2">
+                                                <h4 class="font-medium text-gray-800">${detail.title}</h4>
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${detail.risk === 'High' ? 'bg-red-100 text-red-800' : detail.risk === 'Medium' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'}">
+                                                    ${detail.risk} Risk
+                                                </span>
+                                            </div>
+                                            <p class="text-sm text-gray-600 mb-3">${detail.description}</p>
+                                            <div class="bg-blue-50 p-3 rounded-md">
+                                                <h5 class="text-xs font-semibold text-blue-800 uppercase tracking-wider mb-1">Recommendation</h5>
+                                                <p class="text-sm text-blue-700">${detail.recommendation}</p>
+                                            </div>
+                                        </div>
+                                    `;
+                                });
+                                
+                                resultCard.innerHTML = `
+                                    <div class="px-4 py-3 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                                        <h3 class="font-semibold text-gray-800">${result.title}</h3>
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${result.severity === 'high' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}">
+                                            ${result.severity === 'high' ? 'Critical' : 'Warning'} (${result.details.length} issues)
+                                        </span>
+                                    </div>
+                                    ${detailsHtml}
+                                `;
+                            }
+                            
+                            resultsContainer.appendChild(resultCard);
+                        }
+                    });
+                    
+                    // Update tab labels with counts
+                    updateTabLabels(criticalIssues, warningIssues, compliantIssues);
+                    
+                    // Update dashboard to show 42% with 5 critical issues + 1 warning
+                    updateDashboardTo42Percent(criticalIssues, warningIssues, totalIssues);
+                    
+                    // Show results section
+                    resultsSection.classList.remove('hidden');
+                    
+                    // Reset button
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    
+                    // Scroll to results
+                    setTimeout(() => {
+                        resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+                    
+                }, 1500); // 1.5 second delay for realistic analysis simulation
+            });
+            
+            // Update tab labels
+            function updateTabLabels(critical, warning, compliant) {
+                tabCritical.textContent = `Critical (${critical})`;
+                tabWarnings.textContent = `Warnings (${warning})`;
+                tabCompliant.textContent = `Compliant (${compliant})`;
+            }
+            
+            // Update dashboard to show 42% with issues
+            function updateDashboardTo42Percent(critical, warning, total) {
+                // Update compliance score to 42%
+                const scoreElement = document.getElementById('complianceScore');
+                const scoreBar = document.querySelector('.bg-green-500');
+                
+                scoreElement.textContent = '42%';
+                scoreElement.className = 'compliance-score score-low';
+                
+                if (scoreBar) {
+                    scoreBar.style.width = '42%';
+                    scoreBar.className = 'bg-red-500 h-2 rounded-full';
+                }
+                
+                // Update issue counts
+                document.getElementById('criticalIssues').textContent = critical;
+                document.getElementById('warningIssues').textContent = warning;
+                document.getElementById('totalIssues').textContent = total;
+                
+                // Update icon colors
+                const criticalIcon = document.querySelectorAll('.bg-red-100')[1];
+                const warningIcon = document.querySelectorAll('.bg-yellow-100')[1];
+                const totalIcon = document.querySelectorAll('.bg-blue-100')[1];
+                
+                if (criticalIcon) criticalIcon.className = 'w-12 h-12 md:w-16 md:h-16 rounded-full bg-red-100 flex items-center justify-center';
+                if (warningIcon) warningIcon.className = 'w-12 h-12 md:w-16 md:h-16 rounded-full bg-yellow-100 flex items-center justify-center';
+                if (totalIcon) totalIcon.className = 'w-12 h-12 md:w-16 md:h-16 rounded-full bg-blue-100 flex items-center justify-center';
+            }
+            
+            // Tab switching functionality
+            function switchTab(activeTab) {
+                // Update active tab styling
+                [tabAll, tabCritical, tabWarnings, tabCompliant].forEach(tab => {
+                    tab.classList.remove('tab-active', 'text-[var(--shopify-blue)]', 'border-[var(--shopify-blue)]');
+                    tab.classList.add('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                });
+                
+                activeTab.classList.add('tab-active', 'text-[var(--shopify-blue)]', 'border-[var(--shopify-blue)]');
+                activeTab.classList.remove('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                
+                // Filter results based on tab
+                const tabName = activeTab.id.replace('tab', '').toLowerCase();
+                const allCards = document.querySelectorAll('.analysis-card');
+                
+                allCards.forEach(card => {
+                    const severitySpan = card.querySelector('span');
+                    if (severitySpan) {
+                        const severityText = severitySpan.textContent.toLowerCase();
+                        
+                        if (tabName === 'all') {
+                            card.style.display = 'block';
+                        } else if (tabName === 'critical' && severityText.includes('critical')) {
+                            card.style.display = 'block';
+                        } else if (tabName === 'warnings' && severityText.includes('warning')) {
+                            card.style.display = 'block';
+                        } else if (tabName === 'compliant' && severityText.includes('compliant')) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    }
+                });
+            }
+            
+            tabAll.addEventListener('click', () => switchTab(tabAll));
+            tabCritical.addEventListener('click', () => switchTab(tabCritical));
+            tabWarnings.addEventListener('click', () => switchTab(tabWarnings));
+            tabCompliant.addEventListener('click', () => switchTab(tabCompliant));
+            
+            // Save to localStorage
+            function saveToLocalStorage(key, data) {
+                try {
+                    localStorage.setItem(key, JSON.stringify(data));
+                    return true;
+                } catch (e) {
+                    console.error('Error saving to localStorage:', e);
+                    return false;
+                }
+            }
+            
+            // Load from localStorage
+            function loadFromLocalStorage(key) {
+                try {
+                    const data = localStorage.getItem(key);
+                    return data ? JSON.parse(data) : null;
+                } catch (e) {
+                    console.error('Error loading from localStorage:', e);
+                    return null;
+                }
+            }
+            
+            // Load saved data on page load
+            function loadSavedData() {
+                // Load advisor profile
+                const advisorProfile = loadFromLocalStorage('advisorProfile');
+                if (advisorProfile) {
+                    document.getElementById('editName').value = advisorProfile.name;
+                    document.getElementById('editAvatar').value = advisorProfile.avatar;
+                    document.getElementById('editEmail').value = advisorProfile.email;
+                    document.getElementById('editRole').value = advisorProfile.role;
+                    
+                    // Update UI with saved profile
+                    document.getElementById('welcomeName').textContent = advisorProfile.name;
+                    document.getElementById('sidebarUserName').textContent = advisorProfile.name;
+                    document.getElementById('mobileUserName').textContent = advisorProfile.name;
+                    document.getElementById('sidebarAvatar').textContent = advisorProfile.avatar;
+                    document.getElementById('mobileAvatar').textContent = advisorProfile.avatar;
+                }
+                
+                // Load last analysis
+                const lastAnalysis = loadFromLocalStorage('lastAnalysis');
+                if (lastAnalysis) {
+                    document.getElementById('storeName').value = lastAnalysis.storeName;
+                    document.getElementById('storeUrl').value = lastAnalysis.storeUrl;
+                    document.getElementById('ticketId').value = lastAnalysis.ticketId || '';
+                    
+                    // Show current store badge
+                    currentStoreName.textContent = lastAnalysis.storeName;
+                    currentStoreBadge.classList.remove('hidden');
+                }
+            }
+            
+            // PDF Export Functionality
+            document.getElementById('exportPdf').addEventListener('click', function() {
+                const storeName = document.getElementById('resultStoreNameFull').textContent;
+                
+                if (storeName === '-') {
+                    alert('Please run an analysis first to generate a report.');
+                    return;
+                }
+                
+                // Create PDF content with Shopify branding
+                const pdfContent = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 40px; }
+                            .header { text-align: center; margin-bottom: 30px; }
+                            .shopify-logo { font-size: 28px; font-weight: bold; color: #212B35; }
+                            .shopify-logo .dot { color: #95BF46; }
+                            .title { font-size: 24px; margin: 20px 0; color: #212B35; }
+                            .section { margin: 25px 0; }
+                            .section-title { font-size: 18px; font-weight: bold; color: #2d3748; border-bottom: 2px solid #5C6AC4; padding-bottom: 8px; margin-bottom: 15px; }
+                            .info-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 25px; }
+                            .info-item { background: #f7fafc; padding: 15px; border-radius: 5px; }
+                            .info-label { font-size: 12px; color: #718096; text-transform: uppercase; margin-bottom: 5px; }
+                            .info-value { font-size: 16px; font-weight: bold; color: #2d3748; }
+                            .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 15px; margin-bottom: 30px; }
+                            .summary-card { text-align: center; padding: 20px; border-radius: 8px; }
+                            .summary-value { font-size: 32px; font-weight: bold; margin: 10px 0; }
+                            .issue-card { border: 1px solid #e2e8f0; border-radius: 5px; padding: 15px; margin: 15px 0; }
+                            .issue-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+                            .issue-title { font-weight: bold; font-size: 16px; }
+                            .issue-risk { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+                            .risk-high { background: #fed7d7; color: #c53030; }
+                            .risk-medium { background: #feebc8; color: #c05621; }
+                            .compliant-card { background: #f0fff4; border: 1px solid #c6f6d5; border-radius: 5px; padding: 15px; margin: 15px 0; }
+                            .footer { margin-top: 40px; text-align: center; color: #718096; font-size: 12px; border-top: 1px solid #e2e8f0; padding-top: 20px; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <div class="shopify-logo">Shopify<span class="dot">.</span> Compliance</div>
+                            <div class="title">Compliance Analysis Report</div>
+                            <div>Generated: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}</div>
+                        </div>
+                        
+                        <div class="section">
+                            <div class="section-title">Store Information</div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-label">Store Name</div>
+                                    <div class="info-value">${storeName}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Store URL</div>
+                                    <div class="info-value">${document.getElementById('resultStoreUrl').textContent}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Ticket ID</div>
+                                    <div class="info-value">${document.getElementById('resultTicketId').textContent}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="section">
+                            <div class="section-title">Compliance Summary</div>
+                            <div class="summary-grid">
+                                <div class="summary-card" style="background: #fff5f5;">
+                                    <div>Overall Score</div>
+                                    <div class="summary-value" style="color: #e53e3e;">42%</div>
+                                    <div>Critical Compliance Issues</div>
+                                </div>
+                                <div class="summary-card" style="background: #fff5f5;">
+                                    <div>Critical Issues</div>
+                                    <div class="summary-value" style="color: #e53e3e;">5</div>
+                                    <div>Requires Immediate Action</div>
+                                </div>
+                                <div class="summary-card" style="background: #fffaf0;">
+                                    <div>Warnings</div>
+                                    <div class="summary-value" style="color: #d69e2e;">1</div>
+                                    <div>Needs Attention Soon</div>
+                                </div>
+                                <div class="summary-card" style="background: #f0fff4;">
+                                    <div>Compliant Areas</div>
+                                    <div class="summary-value" style="color: #38a169;">3</div>
+                                    <div>Passed All Checks</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="section">
+                            <div class="section-title">Critical Issues (5)</div>
+                            
+                            <div class="issue-card">
+                                <div class="issue-header">
+                                    <div class="issue-title">1. Checkout & Payment Issues</div>
+                                    <div class="issue-risk risk-high">Critical</div>
+                                </div>
+                                <div style="margin: 10px 0;">
+                                    • Payment Processing Configuration Error<br>
+                                    • Checkout Liquid Architecture Conflict
+                                </div>
+                            </div>
+                            
+                            <div class="issue-card">
+                                <div class="issue-header">
+                                    <div class="issue-title">2. Brand Permission License</div>
+                                    <div class="issue-risk risk-high">Critical</div>
+                                </div>
+                                <div style="margin: 10px 0;">
+                                    • Unauthorized Brand Assets Usage<br>
+                                    • Theme Licensing Violation
+                                </div>
+                            </div>
+                            
+                            <div class="issue-card">
+                                <div class="issue-header">
+                                    <div class="issue-title">3. API License Violations</div>
+                                    <div class="issue-risk risk-high">Critical</div>
+                                </div>
+                                <div style="margin: 10px 0;">
+                                    • API Rate Limit Exceedances
+                                </div>
+                            </div>
+                            
+                            <div class="issue-card">
+                                <div class="issue-header">
+                                    <div class="issue-title">4. CSRF Compliance Status</div>
+                                    <div class="issue-risk risk-high">Critical</div>
+                                </div>
+                                <div style="margin: 10px 0;">
+                                    • Missing CSRF Protection Tokens
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="section">
+                            <div class="section-title">Warning Issue (1)</div>
+                            
+                            <div class="issue-card">
+                                <div class="issue-header">
+                                    <div class="issue-title">Seller Permit Validation</div>
+                                    <div class="issue-risk risk-medium">Warning</div>
+                                </div>
+                                <div style="margin: 10px 0;">
+                                    • Business License Validation Required
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="section">
+                            <div class="section-title">Compliant Areas (3)</div>
+                            
+                            <div class="compliant-card">
+                                <strong>✓ Intellectual Property</strong> - No issues found
+                            </div>
+                            <div class="compliant-card">
+                                <strong>✓ HTTP Security Headers</strong> - No issues found
+                            </div>
+                            <div class="compliant-card">
+                                <strong>✓ SPAV Compliance</strong> - No issues found
+                            </div>
+                        </div>
+                        
+                        <div class="footer">
+                            This report was generated by Shopify Compliance Analyzer. For questions or support, contact Shopify Compliance Team.
+                        </div>
+                    </body>
+                    </html>
+                `;
+                
+                // Open print dialog which allows saving as PDF
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(pdfContent);
+                printWindow.document.close();
+                
+                // Wait for content to load then trigger print
+                setTimeout(() => {
+                    printWindow.print();
+                }, 500);
+                
+                // Show confirmation
+                alert('PDF report generated. Use the print dialog to save as PDF.');
+            });
+            
+            // CSV Export
+            document.getElementById('exportCsv').addEventListener('click', function() {
+                const storeName = document.getElementById('resultStoreNameFull').textContent;
+                const storeUrl = document.getElementById('resultStoreUrl').textContent;
+                const ticketId = document.getElementById('resultTicketId').textContent;
+                
+                if (storeName === '-') {
+                    alert('Please run an analysis first to generate a report.');
+                    return;
+                }
+                
+                // Create CSV content
+                const csvContent = [
+                    ['Shopify Compliance Analysis Report', '', '', ''],
+                    ['Store Name', 'Store URL', 'Ticket ID', 'Date'],
+                    [storeName, storeUrl, ticketId, new Date().toLocaleDateString()],
+                    [],
+                    ['Compliance Summary', '', '', ''],
+                    ['Overall Score', 'Critical Issues', 'Warnings', 'Compliant Areas'],
+                    ['42%', '5', '1', '3'],
+                    [],
+                    ['Critical Issues (5)', 'Severity', 'Risk Level', 'Description'],
+                    ['Checkout & Payment - Payment Processing Configuration Error', 'Critical', 'High', 'Misconfigured payment gateways causing transaction failures'],
+                    ['Checkout & Payment - Checkout Liquid Architecture Conflict', 'Critical', 'High', 'Custom checkout.liquid modifications break standard flow'],
+                    ['Brand License - Unauthorized Brand Assets Usage', 'Critical', 'High', 'Using copyrighted images/logos/fonts without licenses'],
+                    ['Brand License - Theme Licensing Violation', 'Critical', 'High', 'Theme used without valid commercial license'],
+                    ['API Violations - API Rate Limit Exceedances', 'Critical', 'High', 'Consistently exceeding Shopify API rate limits'],
+                    ['CSRF Compliance - Missing CSRF Protection Tokens', 'Critical', 'High', 'Vulnerable to cross-site request forgery attacks'],
+                    [],
+                    ['Warning Issues (1)', 'Severity', 'Risk Level', 'Description'],
+                    ['Seller Permit - Business License Validation Required', 'Warning', 'Medium', 'Store operating without verified seller permit'],
+                    [],
+                    ['Compliant Areas (3)', 'Status', 'Details', ''],
+                    ['Intellectual Property', 'Compliant', 'No issues found', ''],
+                    ['HTTP Security Headers', 'Compliant', 'No issues found', ''],
+                    ['SPAV Compliance', 'Compliant', 'No issues found', '']
+                ];
+                
+                // Convert to CSV string
+                const csvString = csvContent.map(row => 
+                    row.map(cell => `"${cell}"`).join(',')
+                ).join('\n');
+                
+                // Create download link
+                const blob = new Blob([csvString], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `shopify-compliance-${storeName.replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                alert('CSV file downloaded successfully!');
+            });
+            
+            // Re-analyze button
+            document.getElementById('reanalyze').addEventListener('click', function() {
+                // Hide results section
+                resultsSection.classList.add('hidden');
+                
+                // Reset dashboard to 95%
+                document.getElementById('complianceScore').textContent = '95%';
+                document.getElementById('complianceScore').className = 'compliance-score score-high';
+                const scoreBar = document.querySelector('.h-2.rounded-full');
+                if (scoreBar) {
+                    scoreBar.style.width = '95%';
+                    scoreBar.className = 'bg-green-500 h-2 rounded-full';
+                }
+                
+                // Reset issue counts
+                document.getElementById('criticalIssues').textContent = '0';
+                document.getElementById('warningIssues').textContent = '0';
+                document.getElementById('totalIssues').textContent = '0';
+                
+                // Reset tab labels
+                tabCritical.textContent = 'Critical';
+                tabWarnings.textContent = 'Warnings';
+                tabCompliant.textContent = 'Compliant';
+                
+                // Reset all checkboxes to checked
+                checkboxes.forEach(checkbox => checkbox.checked = true);
+                allChecks.checked = true;
+                
+                // Scroll to form
+                setTimeout(() => {
+                    analysisForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            });
+            
+            // Load saved data when page loads
+            loadSavedData();
+            
+            // Form validation
+            const storeNameInput = document.getElementById('storeName');
+            const storeUrlInput = document.getElementById('storeUrl');
+            
+            storeNameInput.addEventListener('input', function() {
+                if (this.value.trim()) {
+                    currentStoreName.textContent = this.value;
+                    currentStoreBadge.classList.remove('hidden');
+                } else {
+                    currentStoreBadge.classList.add('hidden');
+                }
+            });
+            
+            storeUrlInput.addEventListener('input', function() {
+                if (this.checkValidity()) {
+                    this.classList.remove('border-red-300');
+                    this.classList.add('border-green-300');
+                } else {
+                    this.classList.remove('border-green-300');
+                    this.classList.add('border-red-300');
+                }
+            });
+            
+            // Add touch-friendly improvements for mobile
+            if ('ontouchstart' in window || navigator.maxTouchPoints) {
+                // Add larger tap targets for mobile
+                document.querySelectorAll('button, a, input[type="checkbox"]').forEach(el => {
+                    if (el.offsetHeight < 44 || el.offsetWidth < 44) {
+                        el.classList.add('mobile-touch');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
