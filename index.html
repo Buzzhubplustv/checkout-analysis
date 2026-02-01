@@ -383,7 +383,9 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3">
                     <img src="https://cdn.shopify.com/shopifycloud/brochure/assets/brand-assets/shopify-logo-shopping-bag-full-color-66166b2e55d67988b56b4bd28b63c271e2b9713358cb723070a92bde17ad7d63.svg" 
-                         class="shopify-logo-img">
+                         alt="Shopify" 
+                         class="shopify-logo-img"
+                         style="filter: brightness(0) invert(1);">
                     <span class="text-sm font-medium text-gray-300">Compliance</span>
                 </div>
                 <button id="closeMobileMenu" class="text-gray-400 hover:text-white">
@@ -433,9 +435,10 @@
     <div class="sidebar bg-[var(--shopify-dark)] text-white w-64 flex-shrink-0 hidden md:flex flex-col">
         <div class="p-4 border-b border-gray-800">
             <div class="flex items-center space-x-3">
-                <img src="https://cdn.shopify.com/shopifycloud/brochure/assets/brand-assets/shopify-logo-white-bfa8f6afd5d44a309ae9d6c70f8c92a36c12b5b0b8c7879970f87907ac6a6a87.svg" 
+                <img src="https://cdn.shopify.com/shopifycloud/brochure/assets/brand-assets/shopify-logo-shopping-bag-full-color-66166b2e55d67988b56b4bd28b63c271e2b9713358cb723070a92bde17ad7d63.svg" 
                      alt="Shopify" 
-                     class="shopify-logo-img">
+                     class="shopify-logo-img"
+                     style="filter: brightness(0) invert(1);">
                 <span class="text-sm font-medium text-gray-300">Analytics Board</span>
             </div>
         </div>
@@ -483,7 +486,7 @@
                     <button id="openMobileMenu" class="md:hidden mr-4 text-gray-500 mobile-touch">
                         <i class="fas fa-bars text-xl"></i>
                     </button>
-                    <img src="https://cdn.shopify.com/shopifycloud/brochure/assets/brand-assets/shopify-logo-primary-logo-456baa801ee66a0a435671082365958316f2d64d44f7c401b87b7c5bcdee6a8a.svg" 
+                    <img src="https://cdn.shopify.com/shopifycloud/brochure/assets/brand-assets/shopify-logo-shopping-bag-full-color-66166b2e55d67988b56b4bd28b63c271e2b9713358cb723070a92bde17ad7d63.svg" 
                          alt="Shopify" 
                          class="shopify-logo-img">
                     <div class="ml-3 text-sm md:text-base text-gray-600 border-l border-gray-300 pl-3 logo-text">
@@ -643,8 +646,8 @@
                                     <label for="ipInfringement" class="ml-2 block text-sm text-gray-700">Intellectual Property</label>
                                 </div>
                                 <div class="flex items-center">
-                                    <input type="checkbox" id="sellerPermit" name="checks" value="sellerPermit" class="h-4 w-4 text-[var(--shopify-blue)] focus:ring-[var(--shopify-blue)] border-gray-300 rounded" checked>
-                                    <label for="sellerPermit" class="ml-2 block text-sm text-gray-700">Seller Permit Validation</label>
+                                    <input type="checkbox" id="accessibilityIssues" name="checks" value="accessibilityIssues" class="h-4 w-4 text-[var(--shopify-blue)] focus:ring-[var(--shopify-blue)] border-gray-300 rounded" checked>
+                                    <label for="accessibilityIssues" class="ml-2 block text-sm text-gray-700">Accessibility Issues</label>
                                 </div>
                                 <div class="flex items-center">
                                     <input type="checkbox" id="httpHeaders" name="checks" value="httpHeaders" class="h-4 w-4 text-[var(--shopify-blue)] focus:ring-[var(--shopify-blue)] border-gray-300 rounded" checked>
@@ -653,6 +656,10 @@
                                 <div class="flex items-center">
                                     <input type="checkbox" id="spavCompliance" name="checks" value="spavCompliance" class="h-4 w-4 text-[var(--shopify-blue)] focus:ring-[var(--shopify-blue)] border-gray-300 rounded" checked>
                                     <label for="spavCompliance" class="ml-2 block text-sm text-gray-700">SPAV Compliance</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="aupCompliance" name="checks" value="aupCompliance" class="h-4 w-4 text-[var(--shopify-blue)] focus:ring-[var(--shopify-blue)] border-gray-300 rounded" checked>
+                                    <label for="aupCompliance" class="ml-2 block text-sm text-gray-700">AUP Compliance</label>
                                 </div>
                                 <div class="flex items-center">
                                     <input type="checkbox" id="allChecks" class="h-4 w-4 text-[var(--shopify-blue)] focus:ring-[var(--shopify-blue)] border-gray-300 rounded" checked>
@@ -998,7 +1005,7 @@
             const tabWarnings = document.getElementById('tabWarnings');
             const tabCompliant = document.getElementById('tabCompliant');
             
-            // Sample data for results - 5 CRITICAL ISSUES + 1 WARNING
+            // Sample data for results - Updated with AUP Compliance (Warning) and Accessibility Issues (Critical)
             const sampleResults = {
                 checkoutIssues: {
                     title: "Checkout & Payment Issues",
@@ -1060,20 +1067,32 @@
                         }
                     ]
                 },
+                accessibilityIssues: {
+                    title: "Accessibility Issues",
+                    severity: "high", // CRITICAL - Issue 5 (NEW)
+                    details: [
+                        {
+                            title: "WCAG 2.1 AA Compliance Failures",
+                            description: "Store fails multiple Web Content Accessibility Guidelines (WCAG) requirements including insufficient color contrast, missing alt text for images, and improper ARIA labels for screen readers.",
+                            risk: "High",
+                            recommendation: "Implement proper color contrast ratios (4.5:1 for normal text). Add descriptive alt text to all images. Ensure proper keyboard navigation and screen reader compatibility."
+                        }
+                    ]
+                },
                 ipInfringement: {
                     title: "Intellectual Property",
                     severity: "none", // NO ISSUES
                     details: []
                 },
-                sellerPermit: {
-                    title: "Seller Permit Validation",
-                    severity: "medium", // WARNING - 1 warning issue
+                aupCompliance: {
+                    title: "AUP Compliance",
+                    severity: "medium", // WARNING - 1 warning issue (REPLACES Seller Permit)
                     details: [
                         {
-                            title: "Business License Validation Required",
-                            description: "Store is operating without verified seller permit for the current business region. This could result in legal complications if not addressed.",
+                            title: "Acceptable Use Policy Violations",
+                            description: "Store contains prohibited content and violates Shopify's Acceptable Use Policy. Multiple product listings include restricted items or inappropriate content descriptions.",
                             risk: "Medium",
-                            recommendation: "Obtain and upload valid seller permit documentation in Shopify admin settings within the next 30 days."
+                            recommendation: "Review and remove all prohibited content immediately. Review Shopify's Acceptable Use Policy and ensure all products comply. Implement content moderation workflow."
                         }
                     ]
                 },
@@ -1296,14 +1315,15 @@
                     let warningIssues = 0;
                     let compliantIssues = 0;
                     
-                    // Define order: 1. Checkout, 2. Brand License, 3. API Violations, 4. CSRF, then others
+                    // Define order: 1. Checkout, 2. Brand License, 3. API Violations, 4. CSRF, 5. Accessibility, then others
                     const orderedChecks = [
                         'checkoutIssues',
                         'brandLicense', 
                         'apiViolations',
                         'csrfCompliance',
+                        'accessibilityIssues', // NEW CRITICAL ISSUE
                         'ipInfringement',
-                        'sellerPermit',
+                        'aupCompliance', // REPLACED Seller Permit
                         'httpHeaders',
                         'spavCompliance'
                     ];
@@ -1535,7 +1555,7 @@
                 }
             }
             
-            // PDF Export Functionality
+            // PDF Export Functionality - UPDATED with new compliance issues
             document.getElementById('exportPdf').addEventListener('click', function() {
                 const storeName = document.getElementById('resultStoreNameFull').textContent;
                 
@@ -1544,7 +1564,7 @@
                     return;
                 }
                 
-                // Create PDF content with Shopify branding
+                // Create PDF content with Shopify branding and updated compliance issues
                 const pdfContent = `
                     <!DOCTYPE html>
                     <html>
@@ -1669,6 +1689,16 @@
                                     • Missing CSRF Protection Tokens
                                 </div>
                             </div>
+                            
+                            <div class="issue-card">
+                                <div class="issue-header">
+                                    <div class="issue-title">5. Accessibility Issues</div>
+                                    <div class="issue-risk risk-high">Critical</div>
+                                </div>
+                                <div style="margin: 10px 0;">
+                                    • WCAG 2.1 AA Compliance Failures
+                                </div>
+                            </div>
                         </div>
                         
                         <div class="section">
@@ -1676,11 +1706,11 @@
                             
                             <div class="issue-card">
                                 <div class="issue-header">
-                                    <div class="issue-title">Seller Permit Validation</div>
+                                    <div class="issue-title">AUP Compliance</div>
                                     <div class="issue-risk risk-medium">Warning</div>
                                 </div>
                                 <div style="margin: 10px 0;">
-                                    • Business License Validation Required
+                                    • Acceptable Use Policy Violations
                                 </div>
                             </div>
                         </div>
@@ -1720,7 +1750,7 @@
                 alert('PDF report generated. Use the print dialog to save as PDF.');
             });
             
-            // CSV Export
+            // CSV Export - UPDATED with new compliance issues
             document.getElementById('exportCsv').addEventListener('click', function() {
                 const storeName = document.getElementById('resultStoreNameFull').textContent;
                 const storeUrl = document.getElementById('resultStoreUrl').textContent;
@@ -1731,7 +1761,7 @@
                     return;
                 }
                 
-                // Create CSV content
+                // Create CSV content with updated compliance issues
                 const csvContent = [
                     ['Shopify Compliance Analysis Report', '', '', ''],
                     ['Store Name', 'Store URL', 'Ticket ID', 'Date'],
@@ -1748,9 +1778,10 @@
                     ['Brand License - Theme Licensing Violation', 'Critical', 'High', 'Theme used without valid commercial license'],
                     ['API Violations - API Rate Limit Exceedances', 'Critical', 'High', 'Consistently exceeding Shopify API rate limits'],
                     ['CSRF Compliance - Missing CSRF Protection Tokens', 'Critical', 'High', 'Vulnerable to cross-site request forgery attacks'],
+                    ['Accessibility Issues - WCAG 2.1 AA Compliance Failures', 'Critical', 'High', 'Fails Web Content Accessibility Guidelines requirements'],
                     [],
                     ['Warning Issues (1)', 'Severity', 'Risk Level', 'Description'],
-                    ['Seller Permit - Business License Validation Required', 'Warning', 'Medium', 'Store operating without verified seller permit'],
+                    ['AUP Compliance - Acceptable Use Policy Violations', 'Warning', 'Medium', 'Contains prohibited content violating Shopify AUP'],
                     [],
                     ['Compliant Areas (3)', 'Status', 'Details', ''],
                     ['Intellectual Property', 'Compliant', 'No issues found', ''],
@@ -1849,6 +1880,4 @@
         });
     </script>
 </body>
-
 </html>
-
