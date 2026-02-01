@@ -1622,293 +1622,343 @@
             }
             
             // Generate professional PDF report with Shopify logo
-            async function generatePDF() {
-                const storeName = document.getElementById('resultStoreNameFull').textContent;
-                const storeUrl = document.getElementById('resultStoreUrl').textContent;
-                const ticketId = document.getElementById('resultTicketId').textContent;
-                
-                if (storeName === '-') {
-                    alert('Please run an analysis first to generate a report.');
-                    return;
-                }
-                
-                try {
-                    // Show loading state
-                    exportPdf.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Generating PDF...';
-                    exportPdf.disabled = true;
-                    
-                    const { jsPDF } = window.jspdf;
-                    const doc = new jsPDF('p', 'mm', 'a4');
-                    const pageWidth = doc.internal.pageSize.getWidth();
-                    const pageHeight = doc.internal.pageSize.getHeight();
-                    
-                    // Get current date and time
-                    const now = new Date();
-                    const generatedDate = now.toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                    });
-                    const generatedTime = now.toLocaleTimeString('en-US', { 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
-                    });
-                    
-                    // Set document properties for proper window title
-                    doc.setProperties({
-                        title: `${storeName} - Shopify Compliance Analysis Report`,
-                        subject: 'Shopify Compliance Analysis',
-                        author: 'Shopify Compliance Analyzer',
-                        keywords: 'shopify, compliance, analysis, report',
-                        creator: 'Shopify Compliance Team'
-                    });
-                    
-                    // Page 1: Header and Summary
-                    // Add Shopify logo representation (using text and shapes to avoid SVG issues)
-                    doc.setFillColor(149, 191, 70); // Shopify green
-                    doc.rect(20, 15, 170, 20, 'F');
-                    doc.setTextColor(255, 255, 255); // White text
-                    doc.setFontSize(24);
-                    doc.setFont('helvetica', 'bold');
-                    doc.text('Shopify', 105, 28, { align: 'center' });
-                    doc.setTextColor(255, 255, 255);
-                    doc.setFontSize(14);
-                    doc.setFont('helvetica', 'normal');
-                    doc.text('Compliance Analysis Report', 105, 35, { align: 'center' });
-                    
-                    // Add generated date and time
-                    doc.setFontSize(10);
-                    doc.setFont('helvetica', 'normal');
-                    doc.setTextColor(255, 255, 255);
-                    doc.text(`Generated: ${generatedDate} ${generatedTime}`, 105, 42, { align: 'center' });
-                    
-                    // Reset to black text for content
-                    doc.setTextColor(0, 0, 0);
-                    
-                    // Store Information Section
-                    doc.setFontSize(16);
-                    doc.setFont('helvetica', 'bold');
-                    doc.text('Store Information', 20, 65);
-                    
-                    doc.setFontSize(12);
-                    doc.setFont('helvetica', 'normal');
-                    doc.text('STORE NAME', 20, 75);
-                    doc.setFont('helvetica', 'bold');
-                    doc.text(storeName || 'Not provided', 60, 75);
-                    
-                    doc.setFont('helvetica', 'normal');
-                    doc.text('STORE URL', 20, 85);
-                    doc.setFont('helvetica', 'bold');
-                    doc.text(storeUrl || 'Not provided', 60, 85);
-                    
-                    doc.setFont('helvetica', 'normal');
-                    doc.text('TICKET ID', 20, 95);
-                    doc.setFont('helvetica', 'bold');
-                    doc.text(ticketId || 'Not provided', 60, 95);
-                    
-                    // Add separator line
-                    doc.setDrawColor(200, 200, 200);
-                    doc.line(20, 105, pageWidth - 20, 105);
-                    
-                    // Compliance Summary Section
-                    doc.setFontSize(16);
-                    doc.setFont('helvetica', 'bold');
-                    doc.text('Compliance Summary', 20, 120);
-                    
-                    // Overall Score box
-                    doc.setFillColor(255, 245, 245); // Light red for 42%
-                    doc.rect(20, 130, 40, 25, 'F');
-                    doc.setDrawColor(229, 62, 62); // Red border
-                    doc.rect(20, 130, 40, 25);
-                    doc.setTextColor(229, 62, 62);
-                    doc.setFontSize(18);
-                    doc.setFont('helvetica', 'bold');
-                    doc.text('42%', 40, 142, { align: 'center' });
-                    doc.setFontSize(8);
-                    doc.text('Overall Score', 40, 150, { align: 'center' });
-                    
-                    // Critical Issues box
-                    doc.setFillColor(255, 245, 245);
-                    doc.rect(70, 130, 40, 25, 'F');
-                    doc.setDrawColor(229, 62, 62);
-                    doc.rect(70, 130, 40, 25);
-                    doc.setTextColor(229, 62, 62);
-                    doc.setFontSize(18);
-                    doc.text('5', 90, 142, { align: 'center' });
-                    doc.setFontSize(8);
-                    doc.text('Critical Issues', 90, 150, { align: 'center' });
-                    
-                    // Warnings box
-                    doc.setFillColor(255, 250, 240); // Light yellow
-                    doc.rect(120, 130, 40, 25, 'F');
-                    doc.setDrawColor(214, 158, 46); // Yellow border
-                    doc.rect(120, 130, 40, 25);
-                    doc.setTextColor(214, 158, 46);
-                    doc.setFontSize(18);
-                    doc.text('1', 140, 142, { align: 'center' });
-                    doc.setFontSize(8);
-                    doc.text('Warnings', 140, 150, { align: 'center' });
-                    
-                    // Compliant Areas box
-                    doc.setFillColor(240, 255, 244); // Light green
-                    doc.rect(170, 130, 40, 25, 'F');
-                    doc.setDrawColor(56, 161, 105); // Green border
-                    doc.rect(170, 130, 40, 25);
-                    doc.setTextColor(56, 161, 105);
-                    doc.setFontSize(18);
-                    doc.text('3', 190, 142, { align: 'center' });
-                    doc.setFontSize(8);
-                    doc.text('Compliant Areas', 190, 150, { align: 'center' });
-                    
-                    // Page footer for page 1
-                    doc.setFontSize(8);
-                    doc.setTextColor(100, 100, 100);
-                    doc.text('Page 1 of 2', pageWidth / 2, pageHeight - 10, { align: 'center' });
-                    
-                    // Page 2: Detailed Issues
-                    doc.addPage();
-                    
-                    // Page header for page 2
-                    doc.setFontSize(16);
-                    doc.setFont('helvetica', 'bold');
-                    doc.text('Detailed Compliance Analysis', 20, 20);
-                    
-                    doc.setFontSize(10);
-                    doc.setFont('helvetica', 'normal');
-                    doc.setTextColor(100, 100, 100);
-                    doc.text(`Store: ${storeName}`, 20, 28);
-                    
-                    // Add horizontal line
-                    doc.setDrawColor(200, 200, 200);
-                    doc.line(20, 32, pageWidth - 20, 32);
-                    
-                    let yPos = 45;
-                    
-                    // Critical Issues Section
-                    doc.setFontSize(14);
-                    doc.setFont('helvetica', 'bold');
-                    doc.setTextColor(229, 62, 62); // Red for critical
-                    doc.text('Critical Issues (5):', 20, yPos);
-                    yPos += 10;
-                    
-                    doc.setFontSize(10);
-                    doc.setTextColor(0, 0, 0);
-                    
-                    // Critical Issue 1
-                    doc.setFont('helvetica', 'bold');
-                    doc.text('1. Checkout & Payment Issues', 25, yPos);
-                    yPos += 6;
-                    doc.setFont('helvetica', 'normal');
-                    doc.text('• Payment Processing Configuration Error', 30, yPos);
-                    yPos += 6;
-                    doc.text('• Checkout Liquid Architecture Conflict', 30, yPos);
-                    yPos += 10;
-                    
-                    // Critical Issue 2
-                    doc.setFont('helvetica', 'bold');
-                    doc.text('2. Brand Permission License', 25, yPos);
-                    yPos += 6;
-                    doc.setFont('helvetica', 'normal');
-                    doc.text('• Unauthorized Brand Assets Usage', 30, yPos);
-                    yPos += 6;
-                    doc.text('• Theme Licensing Violation', 30, yPos);
-                    yPos += 10;
-                    
-                    // Critical Issue 3
-                    doc.setFont('helvetica', 'bold');
-                    doc.text('3. CSRF Compliance Status', 25, yPos);
-                    yPos += 6;
-                    doc.setFont('helvetica', 'normal');
-                    doc.text('• Missing CSRF Protection Tokens', 30, yPos);
-                    yPos += 10;
-                    
-                    // Check for page break
-                    if (yPos > pageHeight - 40) {
-                        doc.addPage();
-                        yPos = 20;
-                    }
-                    
-                    // Critical Issue 4
-                    doc.setFont('helvetica', 'bold');
-                    doc.text('4. Accessibility Issues', 25, yPos);
-                    yPos += 6;
-                    doc.setFont('helvetica', 'normal');
-                    doc.text('• WCAG 2.1 AA Compliance Failures', 30, yPos);
-                    yPos += 10;
-                    
-                    // Critical Issue 5
-                    doc.setFont('helvetica', 'bold');
-                    doc.text('5. AUP Compliance', 25, yPos);
-                    yPos += 6;
-                    doc.setFont('helvetica', 'normal');
-                    doc.text('• Acceptable Use Policy Violations', 30, yPos);
-                    yPos += 15;
-                    
-                    // Warning Issues Section
-                    doc.setFontSize(14);
-                    doc.setFont('helvetica', 'bold');
-                    doc.setTextColor(214, 158, 46); // Yellow for warning
-                    doc.text('Warning Issue (1):', 20, yPos);
-                    yPos += 10;
-                    
-                    doc.setFontSize(10);
-                    doc.setTextColor(0, 0, 0);
-                    doc.setFont('helvetica', 'bold');
-                    doc.text('HTTP Security Headers', 25, yPos);
-                    yPos += 6;
-                    doc.setFont('helvetica', 'normal');
-                    doc.text('• Missing Security Headers', 30, yPos);
-                    yPos += 15;
-                    
-                    // Compliant Areas Section
-                    doc.setFontSize(14);
-                    doc.setFont('helvetica', 'bold');
-                    doc.setTextColor(56, 161, 105); // Green for compliant
-                    doc.text('Compliant Areas (3):', 20, yPos);
-                    yPos += 10;
-                    
-                    doc.setFontSize(10);
-                    doc.setTextColor(0, 0, 0);
-                    doc.setFont('helvetica', 'normal');
-                    doc.text('• Intellectual Property - No issues found', 25, yPos);
-                    yPos += 7;
-                    doc.text('• HTTP Security Headers - No issues found', 25, yPos);
-                    yPos += 7;
-                    doc.text('• SPAV Compliance - No issues found', 25, yPos);
-                    yPos += 15;
-                    
-                    // Report Footer
-                    doc.setFontSize(9);
-                    doc.setTextColor(100, 100, 100);
-                    doc.text('This report was generated by Shopify Compliance Analyzer.', 20, yPos);
-                    yPos += 5;
-                    doc.text('For questions or support, contact: support@shopify.com', 20, yPos);
-                    
-                    // Page footer for page 2
-                    doc.setFontSize(8);
-                    doc.setTextColor(100, 100, 100);
-                    doc.text('Page 2 of 2', pageWidth / 2, pageHeight - 10, { align: 'center' });
-                    
-                    // Save PDF with proper filename
-                    const fileName = `${storeName.replace(/[^a-z0-9]/gi, '_')}_Compliance_Analysis_${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}.pdf`;
-                    
-                    // Use blob to avoid about:blank issue
-                    const pdfBlob = doc.output('blob');
-                    const url = URL.createObjectURL(pdfBlob);
-                    
-                    // Create download link
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.download = fileName;
-                    link.style.display = 'none';
-                    document.body.appendChild(link);
-                    link.click();
-                    
-                    // Cleanup
-                    setTimeout(() => {
-                        document.body.removeChild(link);
-                        URL.revokeObjectURL(url);
-                    }, 100);
+            // Updated PDF Export Functionality to match HTML design
+document.getElementById('exportPdf').addEventListener('click', async function() {
+    const storeName = document.getElementById('resultStoreNameFull').textContent;
+    const storeUrl = document.getElementById('resultStoreUrl').textContent;
+    const ticketId = document.getElementById('resultTicketId').textContent;
+    
+    if (storeName === '-') {
+        alert('Please run an analysis first to generate a report.');
+        return;
+    }
+    
+    try {
+        // Show loading state
+        const originalText = this.innerHTML;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Generating PDF...';
+        this.disabled = true;
+        
+        // Check if jsPDF is loaded
+        if (typeof window.jspdf === 'undefined') {
+            // Load jsPDF dynamically
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+            script.onload = generatePDF;
+            document.head.appendChild(script);
+        } else {
+            generatePDF();
+        }
+        
+        async function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const pageHeight = doc.internal.pageSize.getHeight();
+            
+            // Get current date and time
+            const now = new Date();
+            const generatedDate = now.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            const generatedTime = now.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            
+            // Set document properties
+            doc.setProperties({
+                title: `${storeName} - Shopify Compliance Analysis Report`,
+                subject: 'Shopify Compliance Analysis',
+                author: 'Shopify Compliance Analyzer',
+                keywords: 'shopify, compliance, analysis, report',
+                creator: 'Shopify Compliance Team'
+            });
+            
+            // Page 1: Header and Store Information
+            // Add Shopify Logo (text version)
+            doc.setFontSize(28);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(33, 43, 53); // Shopify dark
+            doc.text('Shopify', pageWidth / 2, 25, { align: 'center' });
+            
+            // Add green dot
+            doc.setTextColor(149, 191, 70); // Shopify green
+            doc.text('.', pageWidth / 2 + 35, 25, { align: 'center' });
+            
+            // Add "Compliance Analyzer" subtitle
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(100, 100, 100);
+            doc.text('Compliance Analyzer', pageWidth / 2, 33, { align: 'center' });
+            
+            // Main title
+            doc.setFontSize(20);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(33, 43, 53);
+            doc.text('Compliance Analysis Report', pageWidth / 2, 45, { align: 'center' });
+            
+            // Generation date
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(100, 100, 100);
+            doc.text(`Generated: ${generatedDate} ${generatedTime}`, pageWidth / 2, 52, { align: 'center' });
+            
+            // Divider line
+            doc.setDrawColor(200, 200, 200);
+            doc.line(20, 60, pageWidth - 20, 60);
+            
+            let yPos = 70;
+            
+            // Store Information Section
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(33, 43, 53);
+            doc.text('Store Information', 20, yPos);
+            yPos += 15;
+            
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'normal');
+            
+            // Store Name
+            doc.text('Store Name:', 20, yPos);
+            doc.setFont('helvetica', 'bold');
+            doc.text(storeName, 60, yPos);
+            yPos += 8;
+            
+            // Store URL
+            doc.setFont('helvetica', 'normal');
+            doc.text('Store URL:', 20, yPos);
+            doc.setFont('helvetica', 'bold');
+            doc.text(storeUrl, 60, yPos);
+            yPos += 8;
+            
+            // Ticket ID
+            doc.setFont('helvetica', 'normal');
+            doc.text('Ticket ID:', 20, yPos);
+            doc.setFont('helvetica', 'bold');
+            doc.text(ticketId || 'Not provided', 60, yPos);
+            yPos += 20;
+            
+            // Divider
+            doc.setDrawColor(200, 200, 200);
+            doc.line(20, yPos, pageWidth - 20, yPos);
+            yPos += 15;
+            
+            // Compliance Summary Section
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(33, 43, 53);
+            doc.text('Compliance Summary', 20, yPos);
+            yPos += 15;
+            
+            // Summary boxes (similar to HTML design)
+            const boxWidth = 40;
+            const boxHeight = 40;
+            const boxSpacing = 10;
+            const startX = (pageWidth - (boxWidth * 4 + boxSpacing * 3)) / 2;
+            
+            // Overall Score (42% - red)
+            doc.setFillColor(254, 226, 226); // Light red
+            doc.roundedRect(startX, yPos, boxWidth, boxHeight, 3, 3, 'F');
+            doc.setDrawColor(229, 62, 62); // Red border
+            doc.roundedRect(startX, yPos, boxWidth, boxHeight, 3, 3);
+            
+            doc.setTextColor(229, 62, 62);
+            doc.setFontSize(22);
+            doc.setFont('helvetica', 'bold');
+            doc.text('42%', startX + boxWidth/2, yPos + 15, { align: 'center' });
+            
+            doc.setFontSize(9);
+            doc.text('Overall Score', startX + boxWidth/2, yPos + 25, { align: 'center' });
+            
+            // Critical Issues (5 - red)
+            doc.setFillColor(254, 226, 226);
+            doc.roundedRect(startX + boxWidth + boxSpacing, yPos, boxWidth, boxHeight, 3, 3, 'F');
+            doc.setDrawColor(229, 62, 62);
+            doc.roundedRect(startX + boxWidth + boxSpacing, yPos, boxWidth, boxHeight, 3, 3);
+            
+            doc.setTextColor(229, 62, 62);
+            doc.setFontSize(22);
+            doc.text('5', startX + boxWidth + boxSpacing + boxWidth/2, yPos + 15, { align: 'center' });
+            
+            doc.setFontSize(9);
+            doc.text('Critical Issues', startX + boxWidth + boxSpacing + boxWidth/2, yPos + 25, { align: 'center' });
+            
+            // Warnings (0 - yellow)
+            doc.setFillColor(254, 243, 199); // Light yellow
+            doc.roundedRect(startX + (boxWidth + boxSpacing) * 2, yPos, boxWidth, boxHeight, 3, 3, 'F');
+            doc.setDrawColor(214, 158, 46); // Yellow border
+            doc.roundedRect(startX + (boxWidth + boxSpacing) * 2, yPos, boxWidth, boxHeight, 3, 3);
+            
+            doc.setTextColor(214, 158, 46);
+            doc.setFontSize(22);
+            doc.text('0', startX + (boxWidth + boxSpacing) * 2 + boxWidth/2, yPos + 15, { align: 'center' });
+            
+            doc.setFontSize(9);
+            doc.text('Warnings', startX + (boxWidth + boxSpacing) * 2 + boxWidth/2, yPos + 25, { align: 'center' });
+            
+            // Compliant Areas (4 - green)
+            doc.setFillColor(198, 246, 213); // Light green
+            doc.roundedRect(startX + (boxWidth + boxSpacing) * 3, yPos, boxWidth, boxHeight, 3, 3, 'F');
+            doc.setDrawColor(56, 161, 105); // Green border
+            doc.roundedRect(startX + (boxWidth + boxSpacing) * 3, yPos, boxWidth, boxHeight, 3, 3);
+            
+            doc.setTextColor(56, 161, 105);
+            doc.setFontSize(22);
+            doc.text('4', startX + (boxWidth + boxSpacing) * 3 + boxWidth/2, yPos + 15, { align: 'center' });
+            
+            doc.setFontSize(9);
+            doc.text('Compliant Areas', startX + (boxWidth + boxSpacing) * 3 + boxWidth/2, yPos + 25, { align: 'center' });
+            
+            yPos += boxHeight + 20;
+            
+            // Critical Issues Section
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(33, 43, 53);
+            doc.text('Critical Issues (5)', 20, yPos);
+            yPos += 15;
+            
+            // Critical Issue 1: Checkout & Payment Issues
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'bold');
+            doc.text('1. Checkout & Payment Issues', 25, yPos);
+            yPos += 8;
+            
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.text('• Payment Processing Configuration Error', 30, yPos);
+            yPos += 6;
+            doc.text('• Checkout Liquid Architecture Conflict', 30, yPos);
+            yPos += 12;
+            
+            // Critical Issue 2: Brand Permission License
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'bold');
+            doc.text('2. Brand Permission License', 25, yPos);
+            yPos += 8;
+            
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.text('• Unauthorized Brand Assets Usage', 30, yPos);
+            yPos += 6;
+            doc.text('• Theme Licensing Violation', 30, yPos);
+            yPos += 12;
+            
+            // Check if we need a new page
+            if (yPos > pageHeight - 50) {
+                doc.addPage();
+                yPos = 20;
+            }
+            
+            // Critical Issue 3: API License Violations
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'bold');
+            doc.text('3. API License Violations', 25, yPos);
+            yPos += 8;
+            
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.text('• API Rate Limit Exceedances', 30, yPos);
+            yPos += 6;
+            doc.text('• Unauthorized Third-party API Access', 30, yPos);
+            yPos += 12;
+            
+            // Critical Issue 4: CSRF Compliance Status
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'bold');
+            doc.text('4. CSRF Compliance Status', 25, yPos);
+            yPos += 8;
+            
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.text('• Missing CSRF Protection Tokens', 30, yPos);
+            yPos += 15;
+            
+            // Add divider
+            doc.setDrawColor(200, 200, 200);
+            doc.line(20, yPos, pageWidth - 20, yPos);
+            yPos += 15;
+            
+            // Add "Critical" labels like in your image
+            doc.setFontSize(10);
+            doc.setTextColor(229, 62, 62); // Red
+            doc.text('• Critical', 20, yPos);
+            doc.text('• Critical', 60, yPos);
+            yPos += 20;
+            
+            // Compliant Areas Section
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(33, 43, 53);
+            doc.text('Compliant Areas (4)', 20, yPos);
+            yPos += 15;
+            
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(56, 161, 105); // Green
+            
+            // Using checkmark symbol
+            const checkmark = '✓';
+            doc.text(`${checkmark} Intellectual Property - No issues found`, 25, yPos);
+            yPos += 8;
+            doc.text(`${checkmark} Seller Permit Validation - No issues found`, 25, yPos);
+            yPos += 8;
+            doc.text(`${checkmark} HTTP Security Headers - No issues found`, 25, yPos);
+            yPos += 8;
+            doc.text(`${checkmark} SPAV Compliance - No issues found`, 25, yPos);
+            yPos += 20;
+            
+            // Add final divider
+            doc.setDrawColor(200, 200, 200);
+            doc.line(20, yPos, pageWidth - 20, yPos);
+            yPos += 10;
+            
+            // Footer
+            doc.setFontSize(9);
+            doc.setTextColor(100, 100, 100);
+            doc.text('This report was generated by Shopify Compliance Analyzer.', 20, yPos);
+            yPos += 6;
+            doc.text('For questions or support, contact Shopify Compliance Team.', 20, yPos);
+            
+            // Save PDF
+            const fileName = `${storeName.replace(/[^a-z0-9]/gi, '_')}_Compliance_Analysis_${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}.pdf`;
+            
+            // Use blob to avoid about:blank
+            const pdfBlob = doc.output('blob');
+            const url = URL.createObjectURL(pdfBlob);
+            
+            // Create download link
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            
+            // Cleanup
+            setTimeout(() => {
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            }, 100);
+            
+            // Reset button
+            document.getElementById('exportPdf').innerHTML = originalText;
+            document.getElementById('exportPdf').disabled = false;
+            
+            alert('PDF report downloaded successfully!');
+        }
+        
+    } catch (error) {
+        console.error('PDF generation error:', error);
+        alert('Error generating PDF. Please try again.');
+        document.getElementById('exportPdf').innerHTML = '<i class="fas fa-file-pdf mr-1"></i> Download PDF';
+        document.getElementById('exportPdf').disabled = false;
+    }
+});
                     
                     // Reset button state
                     exportPdf.innerHTML = '<i class="fas fa-file-pdf mr-2"></i> Download PDF Report';
@@ -2097,3 +2147,4 @@
     </script>
 </body>
 </html>
+
