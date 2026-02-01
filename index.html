@@ -862,11 +862,6 @@
         </main>
     </div>
 
-    <!-- PDF Content (Hidden) -->
-    <div id="pdf-content" class="hidden" style="width: 210mm; background: white; padding: 20mm;">
-        <!-- This will be populated dynamically for PDF generation -->
-    </div>
-
     <!-- Edit Profile Modal -->
     <div id="profileModalOverlay" class="modal-overlay">
         <div id="profileModal" class="modal">
@@ -1626,7 +1621,7 @@
                 }
             }
             
-            // Generate professional PDF report
+            // Generate professional PDF report with Shopify logo
             async function generatePDF() {
                 const storeName = document.getElementById('resultStoreNameFull').textContent;
                 const storeUrl = document.getElementById('resultStoreUrl').textContent;
@@ -1661,7 +1656,7 @@
                     
                     // Set document properties for proper window title
                     doc.setProperties({
-                        title: `${storeName} | Compliance Analysis Report`,
+                        title: `${storeName} - Shopify Compliance Analysis Report`,
                         subject: 'Shopify Compliance Analysis',
                         author: 'Shopify Compliance Analyzer',
                         keywords: 'shopify, compliance, analysis, report',
@@ -1669,50 +1664,46 @@
                     });
                     
                     // Page 1: Header and Summary
-                    // Add Shopify Logo representation (since we can't embed SVG easily)
+                    // Add Shopify logo representation (using text and shapes to avoid SVG issues)
                     doc.setFillColor(149, 191, 70); // Shopify green
-                    doc.rect(20, 20, 30, 8, 'F');
-                    doc.setTextColor(33, 43, 53); // Shopify dark
+                    doc.rect(20, 15, 170, 20, 'F');
+                    doc.setTextColor(255, 255, 255); // White text
+                    doc.setFontSize(24);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Shopify', 105, 28, { align: 'center' });
+                    doc.setTextColor(255, 255, 255);
                     doc.setFontSize(14);
-                    doc.setFont('helvetica', 'bold');
-                    doc.text('Shopify', 35, 26, { align: 'center' });
-                    
-                    // Add Compliance Analysis Report title
-                    doc.setFontSize(20);
-                    doc.setFont('helvetica', 'bold');
-                    doc.setTextColor(33, 43, 53);
-                    doc.text('Compliance Analysis Report', pageWidth / 2, 40, { align: 'center' });
+                    doc.setFont('helvetica', 'normal');
+                    doc.text('Compliance Analysis Report', 105, 35, { align: 'center' });
                     
                     // Add generated date and time
                     doc.setFontSize(10);
                     doc.setFont('helvetica', 'normal');
-                    doc.setTextColor(100, 100, 100);
-                    doc.text(`Generated: ${generatedDate} ${generatedTime}`, pageWidth / 2, 46, { align: 'center' });
+                    doc.setTextColor(255, 255, 255);
+                    doc.text(`Generated: ${generatedDate} ${generatedTime}`, 105, 42, { align: 'center' });
                     
-                    // Add horizontal line
-                    doc.setDrawColor(200, 200, 200);
-                    doc.line(20, 52, pageWidth - 20, 52);
+                    // Reset to black text for content
+                    doc.setTextColor(0, 0, 0);
                     
                     // Store Information Section
-                    doc.setFontSize(14);
+                    doc.setFontSize(16);
                     doc.setFont('helvetica', 'bold');
-                    doc.setTextColor(33, 43, 53);
                     doc.text('Store Information', 20, 65);
                     
-                    doc.setFontSize(11);
-                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(12);
+                    doc.setFont('helvetica', 'normal');
                     doc.text('STORE NAME', 20, 75);
-                    doc.setFont('helvetica', 'normal');
-                    doc.text(storeName, 60, 75);
-                    
                     doc.setFont('helvetica', 'bold');
+                    doc.text(storeName || 'Not provided', 60, 75);
+                    
+                    doc.setFont('helvetica', 'normal');
                     doc.text('STORE URL', 20, 85);
-                    doc.setFont('helvetica', 'normal');
-                    doc.text(storeUrl, 60, 85);
-                    
                     doc.setFont('helvetica', 'bold');
-                    doc.text('TICKET ID', 20, 95);
+                    doc.text(storeUrl || 'Not provided', 60, 85);
+                    
                     doc.setFont('helvetica', 'normal');
+                    doc.text('TICKET ID', 20, 95);
+                    doc.setFont('helvetica', 'bold');
                     doc.text(ticketId || 'Not provided', 60, 95);
                     
                     // Add separator line
@@ -1720,12 +1711,12 @@
                     doc.line(20, 105, pageWidth - 20, 105);
                     
                     // Compliance Summary Section
-                    doc.setFontSize(14);
+                    doc.setFontSize(16);
                     doc.setFont('helvetica', 'bold');
                     doc.text('Compliance Summary', 20, 120);
                     
                     // Overall Score box
-                    doc.setFillColor(255, 245, 245); // Light red
+                    doc.setFillColor(255, 245, 245); // Light red for 42%
                     doc.rect(20, 130, 40, 25, 'F');
                     doc.setDrawColor(229, 62, 62); // Red border
                     doc.rect(20, 130, 40, 25);
@@ -1771,16 +1762,15 @@
                     
                     // Page footer for page 1
                     doc.setFontSize(8);
-                    doc.setTextColor(150, 150, 150);
+                    doc.setTextColor(100, 100, 100);
                     doc.text('Page 1 of 2', pageWidth / 2, pageHeight - 10, { align: 'center' });
                     
                     // Page 2: Detailed Issues
                     doc.addPage();
                     
                     // Page header for page 2
-                    doc.setFontSize(14);
+                    doc.setFontSize(16);
                     doc.setFont('helvetica', 'bold');
-                    doc.setTextColor(33, 43, 53);
                     doc.text('Detailed Compliance Analysis', 20, 20);
                     
                     doc.setFontSize(10);
@@ -1795,14 +1785,14 @@
                     let yPos = 45;
                     
                     // Critical Issues Section
-                    doc.setFontSize(12);
+                    doc.setFontSize(14);
                     doc.setFont('helvetica', 'bold');
                     doc.setTextColor(229, 62, 62); // Red for critical
                     doc.text('Critical Issues (5):', 20, yPos);
                     yPos += 10;
                     
                     doc.setFontSize(10);
-                    doc.setTextColor(33, 43, 53);
+                    doc.setTextColor(0, 0, 0);
                     
                     // Critical Issue 1
                     doc.setFont('helvetica', 'bold');
@@ -1810,6 +1800,8 @@
                     yPos += 6;
                     doc.setFont('helvetica', 'normal');
                     doc.text('• Payment Processing Configuration Error', 30, yPos);
+                    yPos += 6;
+                    doc.text('• Checkout Liquid Architecture Conflict', 30, yPos);
                     yPos += 10;
                     
                     // Critical Issue 2
@@ -1818,6 +1810,8 @@
                     yPos += 6;
                     doc.setFont('helvetica', 'normal');
                     doc.text('• Unauthorized Brand Assets Usage', 30, yPos);
+                    yPos += 6;
+                    doc.text('• Theme Licensing Violation', 30, yPos);
                     yPos += 10;
                     
                     // Critical Issue 3
@@ -1851,14 +1845,14 @@
                     yPos += 15;
                     
                     // Warning Issues Section
-                    doc.setFontSize(12);
+                    doc.setFontSize(14);
                     doc.setFont('helvetica', 'bold');
                     doc.setTextColor(214, 158, 46); // Yellow for warning
                     doc.text('Warning Issue (1):', 20, yPos);
                     yPos += 10;
                     
                     doc.setFontSize(10);
-                    doc.setTextColor(33, 43, 53);
+                    doc.setTextColor(0, 0, 0);
                     doc.setFont('helvetica', 'bold');
                     doc.text('HTTP Security Headers', 25, yPos);
                     yPos += 6;
@@ -1867,20 +1861,20 @@
                     yPos += 15;
                     
                     // Compliant Areas Section
-                    doc.setFontSize(12);
+                    doc.setFontSize(14);
                     doc.setFont('helvetica', 'bold');
                     doc.setTextColor(56, 161, 105); // Green for compliant
                     doc.text('Compliant Areas (3):', 20, yPos);
                     yPos += 10;
                     
                     doc.setFontSize(10);
-                    doc.setTextColor(33, 43, 53);
+                    doc.setTextColor(0, 0, 0);
                     doc.setFont('helvetica', 'normal');
-                    doc.text('✓ API License Violations - No issues found', 25, yPos);
+                    doc.text('• Intellectual Property - No issues found', 25, yPos);
                     yPos += 7;
-                    doc.text('✓ Intellectual Property - No issues found', 25, yPos);
+                    doc.text('• HTTP Security Headers - No issues found', 25, yPos);
                     yPos += 7;
-                    doc.text('✓ SPAV Compliance - No issues found', 25, yPos);
+                    doc.text('• SPAV Compliance - No issues found', 25, yPos);
                     yPos += 15;
                     
                     // Report Footer
@@ -1892,13 +1886,13 @@
                     
                     // Page footer for page 2
                     doc.setFontSize(8);
-                    doc.setTextColor(150, 150, 150);
+                    doc.setTextColor(100, 100, 100);
                     doc.text('Page 2 of 2', pageWidth / 2, pageHeight - 10, { align: 'center' });
                     
                     // Save PDF with proper filename
                     const fileName = `${storeName.replace(/[^a-z0-9]/gi, '_')}_Compliance_Analysis_${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}.pdf`;
                     
-                    // Use blob to avoid about:blank
+                    // Use blob to avoid about:blank issue
                     const pdfBlob = doc.output('blob');
                     const url = URL.createObjectURL(pdfBlob);
                     
@@ -1920,14 +1914,39 @@
                     exportPdf.innerHTML = '<i class="fas fa-file-pdf mr-2"></i> Download PDF Report';
                     exportPdf.disabled = false;
                     
-                    alert('PDF report generated successfully!');
+                    // Show success notification
+                    showToast('PDF report generated successfully!', 'success');
                     
                 } catch (error) {
                     console.error('PDF generation error:', error);
-                    alert('Error generating PDF. Please try again.');
+                    showToast('Error generating PDF. Please try again.', 'error');
                     exportPdf.innerHTML = '<i class="fas fa-file-pdf mr-2"></i> Download PDF Report';
                     exportPdf.disabled = false;
                 }
+            }
+            
+            // Toast notification function
+            function showToast(message, type = 'info') {
+                // Create toast element
+                const toast = document.createElement('div');
+                toast.className = `fixed top-4 right-4 px-6 py-4 rounded-lg shadow-lg z-50 ${
+                    type === 'success' ? 'bg-green-500 text-white' :
+                    type === 'error' ? 'bg-red-500 text-white' :
+                    'bg-blue-500 text-white'
+                }`;
+                toast.innerHTML = `
+                    <div class="flex items-center">
+                        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'} mr-3"></i>
+                        <span>${message}</span>
+                    </div>
+                `;
+                
+                document.body.appendChild(toast);
+                
+                // Auto-remove after 3 seconds
+                setTimeout(() => {
+                    toast.remove();
+                }, 3000);
             }
             
             // PDF Export Button
@@ -1963,7 +1982,9 @@
                     [''],
                     ['Critical Issues (5)'],
                     ['1. Checkout & Payment Issues', 'Payment Processing Configuration Error'],
+                    ['', 'Checkout Liquid Architecture Conflict'],
                     ['2. Brand Permission License', 'Unauthorized Brand Assets Usage'],
+                    ['', 'Theme Licensing Violation'],
                     ['3. CSRF Compliance Status', 'Missing CSRF Protection Tokens'],
                     ['4. Accessibility Issues', 'WCAG 2.1 AA Compliance Failures'],
                     ['5. AUP Compliance', 'Acceptable Use Policy Violations'],
@@ -1972,8 +1993,8 @@
                     ['HTTP Security Headers', 'Missing Security Headers'],
                     [''],
                     ['Compliant Areas (3)'],
-                    ['API License Violations', 'No issues found'],
                     ['Intellectual Property', 'No issues found'],
+                    ['HTTP Security Headers', 'No issues found'],
                     ['SPAV Compliance', 'No issues found']
                 ];
                 
@@ -1993,7 +2014,7 @@
                 document.body.removeChild(link);
                 URL.revokeObjectURL(url);
                 
-                alert('CSV report downloaded successfully!');
+                showToast('CSV report downloaded successfully!', 'success');
             });
             
             // Re-analyze button
