@@ -180,14 +180,19 @@
         }
         
         /* Shopify logo styling */
-        .shopify-logo {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            font-weight: 700;
-            color: var(--shopify-dark);
+        .shopify-logo-img {
+            height: 24px;
+            width: auto;
         }
         
-        .shopify-logo .dot {
-            color: var(--shopify-green);
+        .shopify-logo-img-lg {
+            height: 32px;
+            width: auto;
+        }
+        
+        .shopify-logo-img-sm {
+            height: 20px;
+            width: auto;
         }
         
         /* Store details badge */
@@ -253,6 +258,14 @@
                 width: 100%;
                 margin-bottom: 0.5rem;
             }
+            
+            .shopify-logo-img {
+                height: 20px;
+            }
+            
+            .shopify-logo-img-lg {
+                height: 26px;
+            }
         }
         
         @media (max-width: 640px) {
@@ -275,10 +288,6 @@
             .space-y-4 > * + * {
                 margin-top: 0.75rem;
             }
-            
-            .shopify-logo {
-                font-size: 1.25rem;
-            }
         }
     </style>
 </head>
@@ -288,9 +297,9 @@
         <div class="p-4 border-b border-gray-800">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3">
-                    <div class="shopify-logo text-white">
-                        Shopify<span class="dot">.</span>
-                    </div>
+                    <img src="https://cdn.shopify.com/shopifycloud/brochure/assets/brand-assets/shopify-logo-shopping-bag-full-color-66166b2e55d67988b56b4bd28b63c271e2b9713358cb723070a92bde17ad7d63.svg" 
+                         alt="Shopify Logo" 
+                         class="shopify-logo-img">
                     <span class="text-sm font-medium text-gray-300">Compliance</span>
                 </div>
                 <button id="closeMobileMenu" class="text-gray-400 hover:text-white">
@@ -340,9 +349,9 @@
     <div class="sidebar bg-[var(--shopify-dark)] text-white w-64 flex-shrink-0 hidden md:flex flex-col">
         <div class="p-4 border-b border-gray-800">
             <div class="flex items-center space-x-3">
-                <div class="shopify-logo text-white text-xl">
-                    Shopify<span class="dot">.</span>
-                </div>
+                <img src="https://cdn.shopify.com/shopifycloud/brochure/assets/brand-assets/shopify-logo-shopping-bag-full-color-66166b2e55d67988b56b4bd28b63c271e2b9713358cb723070a92bde17ad7d63.svg" 
+                     alt="Shopify Logo" 
+                     class="shopify-logo-img">
                 <span class="text-sm font-medium text-gray-300">Compliance Analyzer</span>
             </div>
         </div>
@@ -390,9 +399,9 @@
                     <button id="openMobileMenu" class="md:hidden mr-4 text-gray-500">
                         <i class="fas fa-bars text-xl"></i>
                     </button>
-                    <div class="shopify-logo text-xl md:text-2xl">
-                        Shopify<span class="dot">.</span>
-                    </div>
+                    <img src="https://cdn.shopify.com/shopifycloud/brochure/assets/brand-assets/shopify-logo-shopping-bag-full-color-66166b2e55d67988b56b4bd28b63c271e2b9713358cb723070a92bde17ad7d63.svg" 
+                         alt="Shopify Logo" 
+                         class="shopify-logo-img-lg">
                     <div class="ml-3 text-sm md:text-base text-gray-600 border-l border-gray-300 pl-3">
                         Compliance Analyzer
                     </div>
@@ -405,7 +414,7 @@
                     <button class="text-gray-500 hover:text-gray-700">
                         <i class="fas fa-question-circle"></i>
                     </button>
-                    <!-- User Profile Icon - Now includes Edit Profile functionality -->
+                    <!-- User Profile Icon -->
                     <div class="relative">
                         <button id="userProfileBtn" class="text-gray-500 hover:text-gray-700">
                             <i class="fas fa-user-cog"></i>
@@ -544,8 +553,8 @@
                                     <label for="ipInfringement" class="ml-2 block text-sm text-gray-700">Intellectual Property</label>
                                 </div>
                                 <div class="flex items-center">
-                                    <input type="checkbox" id="sellerPermit" name="checks" value="sellerPermit" class="h-4 w-4 text-[var(--shopify-blue)] focus:ring-[var(--shopify-blue)] border-gray-300 rounded" checked>
-                                    <label for="sellerPermit" class="ml-2 block text-sm text-gray-700">Seller Permit Validation</label>
+                                    <input type="checkbox" id="accessibilityIssues" name="checks" value="accessibilityIssues" class="h-4 w-4 text-[var(--shopify-blue)] focus:ring-[var(--shopify-blue)] border-gray-300 rounded" checked>
+                                    <label for="accessibilityIssues" class="ml-2 block text-sm text-gray-700">Accessibility Issues</label>
                                 </div>
                                 <div class="flex items-center">
                                     <input type="checkbox" id="httpHeaders" name="checks" value="httpHeaders" class="h-4 w-4 text-[var(--shopify-blue)] focus:ring-[var(--shopify-blue)] border-gray-300 rounded" checked>
@@ -554,6 +563,10 @@
                                 <div class="flex items-center">
                                     <input type="checkbox" id="spavCompliance" name="checks" value="spavCompliance" class="h-4 w-4 text-[var(--shopify-blue)] focus:ring-[var(--shopify-blue)] border-gray-300 rounded" checked>
                                     <label for="spavCompliance" class="ml-2 block text-sm text-gray-700">SPAV Compliance</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="aupCompliance" name="checks" value="aupCompliance" class="h-4 w-4 text-[var(--shopify-blue)] focus:ring-[var(--shopify-blue)] border-gray-300 rounded" checked>
+                                    <label for="aupCompliance" class="ml-2 block text-sm text-gray-700">AUP Compliance</label>
                                 </div>
                                 <div class="flex items-center">
                                     <input type="checkbox" id="allChecks" class="h-4 w-4 text-[var(--shopify-blue)] focus:ring-[var(--shopify-blue)] border-gray-300 rounded" checked>
@@ -634,7 +647,7 @@
                                 Critical (5)
                             </button>
                             <button id="tabWarnings" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300">
-                                Warnings (0)
+                                Warnings (1)
                             </button>
                             <button id="tabCompliant" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300">
                                 Compliant (4)
@@ -746,7 +759,7 @@
             // PDF export button
             const exportPdf = document.getElementById('exportPdf');
             
-            // Sample data for results - 5 CRITICAL ISSUES exactly
+            // Sample data for results - 5 CRITICAL ISSUES and 1 WARNING (to match PDF format)
             const sampleResults = {
                 checkoutIssues: {
                     title: "Checkout & Payment Issues",
@@ -814,24 +827,43 @@
                         }
                     ]
                 },
+                accessibilityIssues: {
+                    title: "Accessibility Issues",
+                    severity: "high", // CRITICAL - Issue 5
+                    details: [
+                        {
+                            title: "WCAG 2.1 AA Compliance Failures",
+                            description: "Store fails to meet Web Content Accessibility Guidelines (WCAG) 2.1 AA standards, with insufficient color contrast, missing alt text, and keyboard navigation issues.",
+                            risk: "High",
+                            recommendation: "Conduct a comprehensive accessibility audit. Fix color contrast ratios. Add alt text to all images. Ensure keyboard navigation works throughout the store."
+                        }
+                    ]
+                },
+                aupCompliance: {
+                    title: "AUP Compliance",
+                    severity: "medium", // WARNING - Issue 6
+                    details: [
+                        {
+                            title: "Acceptable Use Policy Violations",
+                            description: "Store contains content that may violate Shopify's Acceptable Use Policy, including potentially misleading product descriptions and incomplete contact information.",
+                            risk: "Medium",
+                            recommendation: "Review all product descriptions for accuracy. Ensure contact information is complete and visible. Remove any content that could be considered misleading."
+                        }
+                    ]
+                },
                 ipInfringement: {
                     title: "Intellectual Property",
-                    severity: "none", // NO ISSUES
-                    details: []
-                },
-                sellerPermit: {
-                    title: "Seller Permit Validation",
-                    severity: "none", // NO ISSUES
+                    severity: "none", // NO ISSUES - Compliant Area 1
                     details: []
                 },
                 httpHeaders: {
                     title: "HTTP Security Headers",
-                    severity: "none", // NO ISSUES
+                    severity: "none", // NO ISSUES - Compliant Area 2
                     details: []
                 },
                 spavCompliance: {
                     title: "SPAV Compliance",
-                    severity: "none", // NO ISSUES
+                    severity: "none", // NO ISSUES - Compliant Area 3
                     details: []
                 }
             };
@@ -973,14 +1005,15 @@
                 let warningIssues = 0;
                 let compliantIssues = 0;
                 
-                // Define order: 1. Checkout, 2. Brand License, 3. API Violations, 4. CSRF, then others
+                // Define order to match the PDF structure
                 const orderedChecks = [
                     'checkoutIssues',
                     'brandLicense', 
                     'apiViolations',
                     'csrfCompliance',
+                    'accessibilityIssues',
+                    'aupCompliance',
                     'ipInfringement',
-                    'sellerPermit',
                     'httpHeaders',
                     'spavCompliance'
                 ];
@@ -1051,7 +1084,7 @@
                                 <div class="px-4 py-3 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
                                     <h3 class="font-semibold text-gray-800">${result.title}</h3>
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${result.severity === 'high' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}">
-                                        ${result.severity === 'high' ? 'Critical' : 'Warning'} (${result.details.length} issues)
+                                        ${result.severity === 'high' ? 'Critical' : 'Warning'} (${result.details.length} ${result.details.length === 1 ? 'issue' : 'issues'})
                                     </span>
                                 </div>
                                 ${detailsHtml}
@@ -1065,7 +1098,7 @@
                 // Update tab labels with counts
                 updateTabLabels(criticalIssues, warningIssues, compliantIssues);
                 
-                // Update dashboard to show 42% with 5 critical issues
+                // Update dashboard to show 42% with 5 critical issues and 1 warning
                 updateDashboardTo42Percent(criticalIssues, warningIssues, totalIssues);
                 
                 // Show results section
@@ -1206,7 +1239,7 @@
                 }
             }
             
-            // Updated PDF Export Functionality to match HTML design
+            // UPDATED PDF Export Functionality to match your professional format
             exportPdf.addEventListener('click', async function() {
                 const storeName = document.getElementById('resultStoreNameFull').textContent;
                 const storeUrl = document.getElementById('resultStoreUrl').textContent;
@@ -1261,40 +1294,44 @@
                             creator: 'Shopify Compliance Team'
                         });
                         
-                        // Page 1: Header and Store Information
-                        // Add Shopify Logo (text version)
+                        let yPos = 20;
+                        
+                        // Page 1: Header Section
+                        // Shopify Logo SVG - Using text representation for now
+                        // For production, you would need to embed the actual SVG or use an image
                         doc.setFontSize(28);
                         doc.setFont('helvetica', 'bold');
-                        doc.setTextColor(33, 43, 53); // Shopify dark
-                        doc.text('Shopify', pageWidth / 2, 25, { align: 'center' });
+                        doc.setTextColor(33, 43, 53); // Shopify dark #212B35
+                        doc.text('Shopify', pageWidth / 2, yPos, { align: 'center' });
                         
-                        // Add green dot
-                        doc.setTextColor(149, 191, 70); // Shopify green
-                        doc.text('.', pageWidth / 2 + 35, 25, { align: 'center' });
-                        
-                        // Add "Compliance Analyzer" subtitle
-                        doc.setFontSize(14);
+                        doc.setFontSize(18);
                         doc.setFont('helvetica', 'normal');
                         doc.setTextColor(100, 100, 100);
-                        doc.text('Compliance Analyzer', pageWidth / 2, 33, { align: 'center' });
+                        doc.text('Compliance', pageWidth / 2, yPos + 10, { align: 'center' });
+                        
+                        yPos += 25;
                         
                         // Main title
-                        doc.setFontSize(20);
+                        doc.setFontSize(22);
                         doc.setFont('helvetica', 'bold');
                         doc.setTextColor(33, 43, 53);
-                        doc.text('Compliance Analysis Report', pageWidth / 2, 45, { align: 'center' });
+                        doc.text('Compliance Analysis Report', pageWidth / 2, yPos, { align: 'center' });
+                        
+                        yPos += 8;
                         
                         // Generation date
                         doc.setFontSize(10);
                         doc.setFont('helvetica', 'normal');
                         doc.setTextColor(100, 100, 100);
-                        doc.text(`Generated: ${generatedDate} ${generatedTime}`, pageWidth / 2, 52, { align: 'center' });
+                        doc.text(`Generated: ${generatedDate} ${generatedTime}`, pageWidth / 2, yPos, { align: 'center' });
+                        
+                        yPos += 20;
                         
                         // Divider line
                         doc.setDrawColor(200, 200, 200);
-                        doc.line(20, 60, pageWidth - 20, 60);
+                        doc.line(20, yPos, pageWidth - 20, yPos);
                         
-                        let yPos = 70;
+                        yPos += 20;
                         
                         // Store Information Section
                         doc.setFontSize(16);
@@ -1306,30 +1343,26 @@
                         doc.setFontSize(11);
                         doc.setFont('helvetica', 'normal');
                         
-                        // Store Name
-                        doc.text('Store Name:', 20, yPos);
+                        // Store Name with proper formatting
                         doc.setFont('helvetica', 'bold');
+                        doc.text('STORE NAME', 20, yPos);
+                        doc.setFont('helvetica', 'normal');
                         doc.text(storeName, 60, yPos);
-                        yPos += 8;
+                        yPos += 10;
                         
                         // Store URL
-                        doc.setFont('helvetica', 'normal');
-                        doc.text('Store URL:', 20, yPos);
                         doc.setFont('helvetica', 'bold');
+                        doc.text('STORE URL', 20, yPos);
+                        doc.setFont('helvetica', 'normal');
                         doc.text(storeUrl, 60, yPos);
-                        yPos += 8;
+                        yPos += 10;
                         
                         // Ticket ID
-                        doc.setFont('helvetica', 'normal');
-                        doc.text('Ticket ID:', 20, yPos);
                         doc.setFont('helvetica', 'bold');
+                        doc.text('TICKET ID', 20, yPos);
+                        doc.setFont('helvetica', 'normal');
                         doc.text(ticketId || 'Not provided', 60, yPos);
-                        yPos += 20;
-                        
-                        // Divider
-                        doc.setDrawColor(200, 200, 200);
-                        doc.line(20, yPos, pageWidth - 20, yPos);
-                        yPos += 15;
+                        yPos += 25;
                         
                         // Compliance Summary Section
                         doc.setFontSize(16);
@@ -1338,66 +1371,45 @@
                         doc.text('Compliance Summary', 20, yPos);
                         yPos += 15;
                         
-                        // Summary boxes (similar to HTML design)
-                        const boxWidth = 40;
-                        const boxHeight = 40;
-                        const boxSpacing = 10;
-                        const startX = (pageWidth - (boxWidth * 4 + boxSpacing * 3)) / 2;
+                        // Create a table-like layout for summary
+                        const summaryData = [
+                            ['Overall Score', '42%'],
+                            ['Critical Issues', '4'],
+                            ['Warnings', '1'],
+                            ['Compliant Areas', '4']
+                        ];
                         
-                        // Overall Score (42% - red)
-                        doc.setFillColor(254, 226, 226); // Light red
-                        doc.roundedRect(startX, yPos, boxWidth, boxHeight, 3, 3, 'F');
-                        doc.setDrawColor(229, 62, 62); // Red border
-                        doc.roundedRect(startX, yPos, boxWidth, boxHeight, 3, 3);
+                        // Draw summary boxes
+                        summaryData.forEach((row, index) => {
+                            const xPos = 20 + (index % 2) * 90;
+                            const currentY = yPos + Math.floor(index / 2) * 25;
+                            
+                            // Draw box
+                            doc.setDrawColor(200, 200, 200);
+                            doc.roundedRect(xPos, currentY, 80, 20, 3, 3);
+                            
+                            // Label
+                            doc.setFontSize(9);
+                            doc.setFont('helvetica', 'normal');
+                            doc.setTextColor(100, 100, 100);
+                            doc.text(row[0], xPos + 5, currentY + 8);
+                            
+                            // Value
+                            doc.setFontSize(14);
+                            doc.setFont('helvetica', 'bold');
+                            if (row[0] === 'Overall Score') {
+                                doc.setTextColor(222, 54, 24); // Red for 42%
+                            } else if (row[0] === 'Critical Issues') {
+                                doc.setTextColor(222, 54, 24); // Red
+                            } else if (row[0] === 'Warnings') {
+                                doc.setTextColor(245, 158, 11); // Yellow
+                            } else {
+                                doc.setTextColor(80, 184, 60); // Green
+                            }
+                            doc.text(row[1], xPos + 40, currentY + 15, { align: 'center' });
+                        });
                         
-                        doc.setTextColor(229, 62, 62);
-                        doc.setFontSize(22);
-                        doc.setFont('helvetica', 'bold');
-                        doc.text('42%', startX + boxWidth/2, yPos + 15, { align: 'center' });
-                        
-                        doc.setFontSize(9);
-                        doc.text('Overall Score', startX + boxWidth/2, yPos + 25, { align: 'center' });
-                        
-                        // Critical Issues (5 - red)
-                        doc.setFillColor(254, 226, 226);
-                        doc.roundedRect(startX + boxWidth + boxSpacing, yPos, boxWidth, boxHeight, 3, 3, 'F');
-                        doc.setDrawColor(229, 62, 62);
-                        doc.roundedRect(startX + boxWidth + boxSpacing, yPos, boxWidth, boxHeight, 3, 3);
-                        
-                        doc.setTextColor(229, 62, 62);
-                        doc.setFontSize(22);
-                        doc.text('5', startX + boxWidth + boxSpacing + boxWidth/2, yPos + 15, { align: 'center' });
-                        
-                        doc.setFontSize(9);
-                        doc.text('Critical Issues', startX + boxWidth + boxSpacing + boxWidth/2, yPos + 25, { align: 'center' });
-                        
-                        // Warnings (0 - yellow)
-                        doc.setFillColor(254, 243, 199); // Light yellow
-                        doc.roundedRect(startX + (boxWidth + boxSpacing) * 2, yPos, boxWidth, boxHeight, 3, 3, 'F');
-                        doc.setDrawColor(214, 158, 46); // Yellow border
-                        doc.roundedRect(startX + (boxWidth + boxSpacing) * 2, yPos, boxWidth, boxHeight, 3, 3);
-                        
-                        doc.setTextColor(214, 158, 46);
-                        doc.setFontSize(22);
-                        doc.text('0', startX + (boxWidth + boxSpacing) * 2 + boxWidth/2, yPos + 15, { align: 'center' });
-                        
-                        doc.setFontSize(9);
-                        doc.text('Warnings', startX + (boxWidth + boxSpacing) * 2 + boxWidth/2, yPos + 25, { align: 'center' });
-                        
-                        // Compliant Areas (4 - green)
-                        doc.setFillColor(198, 246, 213); // Light green
-                        doc.roundedRect(startX + (boxWidth + boxSpacing) * 3, yPos, boxWidth, boxHeight, 3, 3, 'F');
-                        doc.setDrawColor(56, 161, 105); // Green border
-                        doc.roundedRect(startX + (boxWidth + boxSpacing) * 3, yPos, boxWidth, boxHeight, 3, 3);
-                        
-                        doc.setTextColor(56, 161, 105);
-                        doc.setFontSize(22);
-                        doc.text('4', startX + (boxWidth + boxSpacing) * 3 + boxWidth/2, yPos + 15, { align: 'center' });
-                        
-                        doc.setFontSize(9);
-                        doc.text('Compliant Areas', startX + (boxWidth + boxSpacing) * 3 + boxWidth/2, yPos + 25, { align: 'center' });
-                        
-                        yPos += boxHeight + 20;
+                        yPos += 60;
                         
                         // Critical Issues Section
                         doc.setFontSize(16);
@@ -1406,31 +1418,39 @@
                         doc.text('Critical Issues (5)', 20, yPos);
                         yPos += 15;
                         
-                        // Critical Issue 1: Checkout & Payment Issues
+                        // Critical Issue 1
                         doc.setFontSize(12);
                         doc.setFont('helvetica', 'bold');
                         doc.text('1. Checkout & Payment Issues', 25, yPos);
                         yPos += 8;
                         
+                        // Add "Critical" label in red
                         doc.setFontSize(10);
+                        doc.setFont('helvetica', 'bold');
+                        doc.setTextColor(222, 54, 24); // Red
+                        doc.text('• Critical', 30, yPos);
                         doc.setFont('helvetica', 'normal');
-                        doc.text('• Payment Processing Configuration Error', 30, yPos);
+                        doc.text('- Payment Processing Configuration Error', 60, yPos);
                         yPos += 6;
-                        doc.text('• Checkout Liquid Architecture Conflict', 30, yPos);
-                        yPos += 12;
+                        doc.text('- Checkout Liquid Architecture Conflict', 60, yPos);
+                        yPos += 15;
                         
-                        // Critical Issue 2: Brand Permission License
+                        // Critical Issue 2
                         doc.setFontSize(12);
                         doc.setFont('helvetica', 'bold');
+                        doc.setTextColor(33, 43, 53);
                         doc.text('2. Brand Permission License', 25, yPos);
                         yPos += 8;
                         
                         doc.setFontSize(10);
+                        doc.setFont('helvetica', 'bold');
+                        doc.setTextColor(222, 54, 24);
+                        doc.text('• Critical', 30, yPos);
                         doc.setFont('helvetica', 'normal');
-                        doc.text('• Unauthorized Brand Assets Usage', 30, yPos);
+                        doc.text('- Unauthorized Brand Assets Usage', 60, yPos);
                         yPos += 6;
-                        doc.text('• Theme Licensing Violation', 30, yPos);
-                        yPos += 12;
+                        doc.text('- Theme Licensing Violation', 60, yPos);
+                        yPos += 15;
                         
                         // Check if we need a new page
                         if (yPos > pageHeight - 50) {
@@ -1438,40 +1458,62 @@
                             yPos = 20;
                         }
                         
-                        // Critical Issue 3: API License Violations
+                        // Critical Issue 3
                         doc.setFontSize(12);
                         doc.setFont('helvetica', 'bold');
-                        doc.text('3. API License Violations', 25, yPos);
-                        yPos += 8;
-                        
-                        doc.setFontSize(10);
-                        doc.setFont('helvetica', 'normal');
-                        doc.text('• API Rate Limit Exceedances', 30, yPos);
-                        yPos += 6;
-                        doc.text('• Unauthorized Third-party API Access', 30, yPos);
-                        yPos += 12;
-                        
-                        // Critical Issue 4: CSRF Compliance Status
-                        doc.setFontSize(12);
-                        doc.setFont('helvetica', 'bold');
+                        doc.setTextColor(33, 43, 53);
                         doc.text('4. CSRF Compliance Status', 25, yPos);
                         yPos += 8;
                         
                         doc.setFontSize(10);
+                        doc.setFont('helvetica', 'bold');
+                        doc.setTextColor(222, 54, 24);
+                        doc.text('• Critical', 30, yPos);
                         doc.setFont('helvetica', 'normal');
-                        doc.text('• Missing CSRF Protection Tokens', 30, yPos);
+                        doc.text('- Missing CSRF Protection Tokens', 60, yPos);
                         yPos += 15;
                         
-                        // Add divider
-                        doc.setDrawColor(200, 200, 200);
-                        doc.line(20, yPos, pageWidth - 20, yPos);
-                        yPos += 15;
+                        // Critical Issue 4
+                        doc.setFontSize(12);
+                        doc.setFont('helvetica', 'bold');
+                        doc.setTextColor(33, 43, 53);
+                        doc.text('5. Accessibility Issues', 25, yPos);
+                        yPos += 8;
                         
-                        // Add "Critical" labels like in your image
                         doc.setFontSize(10);
-                        doc.setTextColor(229, 62, 62); // Red
-                        doc.text('• Critical', 20, yPos);
-                        doc.text('• Critical', 60, yPos);
+                        doc.setFont('helvetica', 'bold');
+                        doc.setTextColor(222, 54, 24);
+                        doc.text('• Critical', 30, yPos);
+                        doc.setFont('helvetica', 'normal');
+                        doc.text('- WCAG 2.1 AA Compliance Failures', 60, yPos);
+                        yPos += 20;
+                        
+                        // Check for page break
+                        if (yPos > pageHeight - 50) {
+                            doc.addPage();
+                            yPos = 20;
+                        }
+                        
+                        // Warning Issue Section
+                        doc.setFontSize(16);
+                        doc.setFont('helvetica', 'bold');
+                        doc.setTextColor(33, 43, 53);
+                        doc.text('Warning Issue (1)', 20, yPos);
+                        yPos += 15;
+                        
+                        // Warning Issue
+                        doc.setFontSize(12);
+                        doc.setFont('helvetica', 'bold');
+                        doc.text('AUP Compliance', 25, yPos);
+                        yPos += 8;
+                        
+                        doc.setFontSize(10);
+                        doc.setFont('helvetica', 'bold');
+                        doc.setTextColor(245, 158, 11); // Yellow
+                        doc.text('• Warning', 30, yPos);
+                        doc.setFont('helvetica', 'normal');
+                        doc.setTextColor(33, 43, 53);
+                        doc.text('- Acceptable Use Policy Violations', 60, yPos);
                         yPos += 20;
                         
                         // Compliant Areas Section
@@ -1483,30 +1525,24 @@
                         
                         doc.setFontSize(10);
                         doc.setFont('helvetica', 'normal');
-                        doc.setTextColor(56, 161, 105); // Green
+                        doc.setTextColor(80, 184, 60); // Green
                         
                         // Using checkmark symbol
                         const checkmark = '✓';
-                        doc.text(`${checkmark} Intellectual Property - No issues found`, 25, yPos);
+                        doc.text(${checkmark} Intellectual Property - No issues found, 25, yPos);
                         yPos += 8;
-                        doc.text(`${checkmark} Seller Permit Validation - No issues found`, 25, yPos);
+                        doc.text(${checkmark} HTTP Security Headers - No issues found, 25, yPos);
                         yPos += 8;
-                        doc.text(`${checkmark} HTTP Security Headers - No issues found`, 25, yPos);
+                        doc.text(${checkmark} API License Violations - No issues found, 25, yPos);
                         yPos += 8;
-                        doc.text(`${checkmark} SPAV Compliance - No issues found`, 25, yPos);
+                        doc.text(${checkmark} SPAV Compliance - No issues found, 25, yPos);
                         yPos += 20;
-                        
-                        // Add final divider
-                        doc.setDrawColor(200, 200, 200);
-                        doc.line(20, yPos, pageWidth - 20, yPos);
-                        yPos += 10;
                         
                         // Footer
                         doc.setFontSize(9);
                         doc.setTextColor(100, 100, 100);
-                        doc.text('This report was generated by Shopify Compliance Analyzer.', 20, yPos);
-                        yPos += 6;
-                        doc.text('For questions or support, contact Shopify Compliance Team.', 20, yPos);
+                        doc.text('Page 1 of 2', pageWidth / 2, pageHeight - 10, { align: 'center' });
+                        doc.text('Shopify Compliance Team • compliance@shopify.com', 20, pageHeight - 10);
                         
                         // Save PDF
                         const fileName = `${storeName.replace(/[^a-z0-9]/gi, '_')}_Compliance_Analysis_${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}.pdf`;
@@ -1563,7 +1599,7 @@
                     [],
                     ['Compliance Summary', '', '', ''],
                     ['Overall Score', 'Critical Issues', 'Warnings', 'Compliant Areas'],
-                    ['42%', '5', '0', '4'],
+                    ['42%', '5', '1', '3'],
                     [],
                     ['Critical Issues (5)', 'Severity', 'Risk Level', 'Description'],
                     ['Checkout & Payment - Payment Processing Configuration Error', 'Critical', 'High', 'Misconfigured payment gateways causing transaction failures'],
@@ -1573,10 +1609,13 @@
                     ['API Violations - API Rate Limit Exceedances', 'Critical', 'High', 'Consistently exceeding Shopify API rate limits'],
                     ['API Violations - Unauthorized Third-party API Access', 'Critical', 'High', 'Third-party apps accessing APIs without proper auth'],
                     ['CSRF Compliance - Missing CSRF Protection Tokens', 'Critical', 'High', 'Vulnerable to cross-site request forgery attacks'],
+                    ['Accessibility Issues - WCAG 2.1 AA Compliance Failures', 'Critical', 'High', 'Fails to meet Web Content Accessibility Guidelines'],
                     [],
-                    ['Compliant Areas (4)', 'Status', 'Details', ''],
+                    ['Warning Issue (1)', 'Severity', 'Risk Level', 'Description'],
+                    ['AUP Compliance - Acceptable Use Policy Violations', 'Warning', 'Medium', 'Content may violate Shopify Acceptable Use Policy'],
+                    [],
+                    ['Compliant Areas (3)', 'Status', 'Details', ''],
                     ['Intellectual Property', 'Compliant', 'No issues found', ''],
-                    ['Seller Permit Validation', 'Compliant', 'No issues found', ''],
                     ['HTTP Security Headers', 'Compliant', 'No issues found', ''],
                     ['SPAV Compliance', 'Compliant', 'No issues found', '']
                 ];
